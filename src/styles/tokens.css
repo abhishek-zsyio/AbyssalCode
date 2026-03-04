@@ -1,0 +1,44 @@
+/* ===================== TOKENS ===================== */
+
+:root {
+  --rp-bg: #191724;
+  --rp-bg1: #1f1d2e;
+  --rp-bg2: #26233a;
+  --rp-bg3: #6e6a86;
+  --rp-bg4: #908caa;
+
+  --rp-fg: #e0def4;
+  --rp-fg1: #e0def4;
+  --rp-fg2: #908caa;
+  --rp-fg3: #6e6a86;
+
+  --rp-love: #eb6f92;
+  --rp-gold: #f6c177;
+  --rp-rose: #ea9a97;
+  --rp-pine: #31748f;
+  --rp-foam: #9ccfd8;
+  --rp-iris: #c4a7e7;
+
+  --rp-love-dim: #b4637a;
+  --rp-gold-dim: #ea9d34;
+  --rp-pine-dim: #286983;
+  --rp-foam-dim: #56949f;
+  --rp-iris-dim: #907aa9;
+
+  /* Standardized Radii */
+  --br-sm: 6px;
+  --br-main: 12px;
+  --br-lg: 18px;
+  --br-pill: 99px;
+
+  /* Button System */
+  --btn-p-bg: var(--rp-pine);
+  --btn-p-fg: var(--rp-bg);
+  --btn-s-bg: color-mix(in srgb, var(--rp-iris) 15%, var(--rp-bg2));
+  --btn-s-fg: var(--rp-iris);
+  --btn-a-bg: color-mix(in srgb, var(--rp-gold) 12%, transparent);
+  --btn-a-fg: var(--rp-gold);
+  --btn-d-bg: color-mix(in srgb, var(--rp-love) 15%, transparent);
+  --btn-d-fg: var(--rp-love);
+}
+

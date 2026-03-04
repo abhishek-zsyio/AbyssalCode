@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Abyssal Code – Master Python & JavaScript Challenges</title>
+  <meta name="description" content="Dominate the abyss of code. Master Python and JavaScript through gamified challenges, level up, and climb the leaderboard.">
+  <meta name="keywords" content="coding challenges, python, javascript, gamified learning, programming, learn to code, web dev">
+  <meta name="author" content="Abyssal Code Team">
+  <link rel="canonical" href="https://abyssal-code.vercel.app/">
+  <meta name="theme-color" content="#f8fafc">
+
+  <!-- Open Graph / Facebook -->
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://abyssal-code.vercel.app/">
+  <meta property="og:title" content="Abyssal Code – Master Python & JavaScript Challenges">
+  <meta property="og:description" content="Dominate the abyss of code. Master Python and JavaScript through gamified challenges.">
+  <meta property="og:image" content="https://abyssal-code.vercel.app/og-image.png">
+
+  <!-- Twitter -->
+  <meta property="twitter:card" content="summary_large_image">
+  <meta property="twitter:url" content="https://abyssal-code.vercel.app/">
+  <meta property="twitter:title" content="Abyssal Code – Master Python & JavaScript Challenges">
+  <meta property="twitter:description" content="Dominate the abyss of code. Master Python and JavaScript through gamified challenges.">
+  <meta property="twitter:image" content="https://abyssal-code.vercel.app/og-image.png">
+
+  <link rel="manifest" href="/manifest.json">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
+  <noscript>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+  </noscript>
+
+  <!-- Local Assets -->
+
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+  <link rel="stylesheet" href="src/styles/index.css">
+</head>
+<body>
+<a href="#main-content" class="skip-link">Skip to main content</a>
+
+<!-- SPLASH SCREEN -->
+<div class="splash-screen" id="splash-screen">
+  <div class="splash-content">
+    <div class="splash-logo" aria-hidden="true"><i data-lucide="swords"></i></div>
+    <div class="splash-title">Abyssal Code</div>
+    <p class="splash-subtitle">RELEASING SPIRITUAL PRESSURE...</p>
+    <div class="splash-progress-track">
+      <div class="splash-progress-fill" id="splash-progress"></div>
+    </div>
+  </div>
+</div>
+
+<!-- Theme BG image -->
+<div class="theme-bg" id="theme-bg" aria-hidden="true"></div>
+
+<!-- Animated BG: pure CSS, zero library cost -->
+<div class="bg-canvas" id="bg-canvas"></div>
+<div id="tsparticles" aria-hidden="true"></div>
+
+
+  <header class="main-header">
+    <div class="header-container">
+      <div class="header-left" onclick="window.location.reload()" title="Go Home">
+        <div class="header-logo" aria-hidden="true"><i data-lucide="swords"></i></div>
+        <span class="header-title">Abyssal Code</span>
+      </div>
+
+      <div class="header-right" id="header-right">
+        <div class="search-wrapper header-search">
+          <span class="search-icon"><i data-lucide="search"></i></span>
+          <input type="text" id="quest-search" class="search-input" placeholder="Search quests..." oninput="filterQuests()" autocomplete="off">
+          <div class="search-dropdown" id="search-dropdown"></div>
+        </div>
+        
+        <button class="header-toggle-btn toggle-left" id="header-expand-btn" title="Expand Search" aria-label="Expand search"><i data-lucide="chevron-left"></i></button>
+        <button class="header-toggle-btn toggle-right" id="header-collapse-btn" title="Show Icons" aria-label="Show controls"><i data-lucide="chevron-right"></i></button>
+
+        <div class="top-controls" id="top-controls">
+          <button class="ctrl-btn" onclick="openLeaderboard()" title="Leaderboard" style="--btn-accent: #facc15;"><i data-lucide="trophy"></i> Leaders</button>
+          <button class="ctrl-btn" onclick="openAchievements()" title="Achievements" style="--btn-accent: #c4a7e7;"><i data-lucide="medal"></i> Badges</button>
+          
+          <div class="music-player" style="--btn-accent: #31748f;">
+            <button class="player-mute-btn" onclick="toggleSound()" title="Mute/Unmute" aria-label="Mute or unmute music"><i data-lucide="volume-2"></i></button>
+            <div class="player-info" id="music-player-info">
+              <!-- music-picker will be injected here -->
+            </div>
+            <div class="player-btns">
+              <button class="player-btn" onclick="prevTrack()" title="Previous Track" aria-label="Previous track"><i data-lucide="skip-back"></i></button>
+              <button class="player-btn play-pause-btn" id="play-pause-btn" onclick="toggleMusicPause()" title="Play/Pause" aria-label="Play or pause music"><i data-lucide="pause"></i></button>
+              <button class="player-btn" onclick="nextTrack()" title="Next Track" aria-label="Next track"><i data-lucide="skip-forward"></i></button>
+            </div>
+          </div>
+          <button class="ctrl-btn" onclick="openThemePicker()" title="Themes Tuning" style="--btn-accent: #ebbcba;"><i data-lucide="palette"></i> Themes</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Top Category Tabs (Inside Header) -->
+    <div class="top-tabs-wrapper">
+      <button class="tabs-nav-btn tabs-prev" id="tabs-prev" title="Previous Categories"><i data-lucide="chevron-left"></i></button>
+      <div class="tabs" id="tabs-container"></div>
+      <button class="tabs-nav-btn tabs-next" id="tabs-next" title="Next Categories"><i data-lucide="chevron-right"></i></button>
+    </div>
+
+    <!-- Global Music Progress Bar (Single instance at the bottom of header) -->
+    <div class="header-progress-container" id="music-progress-container">
+      <div id="music-progress" class="header-progress-fill"></div>
+    </div>
+  </header>
+
+  <div class="app-container">
+    <main class="main-content" id="main-content">
+      <div class="app-wrapper">
+        <!-- HERO SECTION -->
+        <div class="hero">
+          <div class="hero-mascot">
+            <img src="https://media2.giphy.com/media/v1.Y2lkPTc5MGI3NjExa2Zsd2lzbHhsc2Flam02ZXhoMXFxdzEzbzZqbWoxanliMDQzMDJ1MiZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/jzHFPlw89eTqU/giphy.gif"
+                 alt="Python Mascot"
+                 onerror="this.parentElement.innerHTML='🐍'">
+          </div>
+          <h1 class="hero-title">Abyssal Code</h1>
+          <p class="hero-sub">Master the abyss. Conquer Python & JavaScript. Dominate the leaderboard.</p>
+          <button class="surprise-btn" onclick="openSurpriseQuest()" title="Random unsolved quest">
+            <i data-lucide="shuffle"></i> Surprise Me
+          </button>
+        </div>
+
+      <!-- DAILY QUEST -->
+      <div class="daily-box" id="daily-quest-box" onclick="openDailyQuest()">
+        <div>
+          <div class="daily-tag">Daily Challenge</div>
+          <div class="daily-title" id="daily-quest-title">Loading Daily Quest...</div>
+        </div>
+        <div class="daily-xp">2x XP BONUS</div>
+      </div>
+
+      <!-- XP BAR -->
+      <div class="xp-bar-section">
+      <div class="xp-avatar" id="avatar-emoji">
+        <i data-lucide="egg"></i>
+      </div>
+      <div class="xp-info">
+        <div class="xp-level" id="level-label">LEVEL 1 — HATCHLING</div>
+        <div class="xp-name"  id="rank-name">Python Novice</div>
+        <div class="xp-track"><div class="xp-fill" id="xp-fill" style="width:0%"></div></div>
+        <div class="xp-label" id="xp-label">0 / 500 XP to next level</div>
+      </div>
+        <div class="stat-chips">
+          <div class="stat-chip"><div class="val" id="stat-done">0</div><div class="lbl">Quests Done</div></div>
+          <div class="stat-chip"><div class="val" id="stat-xp">0</div><div class="lbl">Total XP</div></div>
+          <div class="stat-chip"><div class="val" id="stat-streak">0 <i data-lucide="flame" class="streak-icon"></i></div><div class="lbl">Streak</div></div>
+          <div class="stat-chip"><div class="val combo-text" id="stat-combo">1.0x</div><div class="lbl" style="color:var(--rp-rose)">Combo</div></div>
+        </div>
+      </div>
+
+      <!-- HEATMAP -->
+      <div class="heatmap-section">
+        <div class="heatmap-header">
+          <i data-lucide="activity"></i>
+          <span>Coding Activity</span>
+          <span class="heatmap-subtext">Last 5 weeks</span>
+        </div>
+        <div id="heatmap-container"></div>
+      </div>
+
+
+      <!-- CONTENT -->
+      <div id="content-area"></div>
+    </div>
+  </main>
+</div>
+
+<!-- COMPILER MODAL -->
+<div class="modal-overlay" id="code-modal">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h2 id="modal-title">Quest Title</h2>
+      <button class="close-btn" onclick="closeModal()"><i data-lucide="x"></i></button>
+    </div>
+    <div class="modal-body">
+      <div class="modal-left">
+        <div class="instruction-box" id="modal-desc">Description here.</div>
+        
+        <div class="modal-actions-row">
+          <button class="hint-btn" id="modal-hint-btn"><i data-lucide="lightbulb"></i> Reveal Hint</button>
+          <button class="hint-btn tint" id="modal-solution-btn" style="display:none;">
+            <i data-lucide="sparkles"></i> See Solution
+          </button>
+        </div>
+
+        <div class="hint-box" id="modal-hint-box">
+          <strong>Hint:</strong> <span id="modal-hint-content"></span>
+        </div>
+
+        <div id="solution-view" class="solution-box" style="display:none;">
+          <div class="solution-header">
+            <i data-lucide="check-circle-2"></i> Reference Solution
+            <button class="close-solution-btn" onclick="toggleSolutionView(false)"><i data-lucide="x"></i></button>
+          </div>
+          <pre id="solution-code-display"></pre>
+        </div>
+
+        <div style="flex:1"></div>
+        <div class="terminal" id="terminal-output">Ready. Click <i data-lucide="play-circle"></i> Run Tests to execute your code.</div>
+      </div>
+      <div class="modal-right">
+        <div class="status-badge" id="compiler-status"><i data-lucide="terminal"></i> Loading Python Engine...</div>
+        <div class="editor-wrapper">
+          <textarea id="code-editor"></textarea>
+        </div>
+        <div class="run-bar">
+          <span class="run-hint">Use <code>print()</code> to debug</span>
+          <button class="run-btn" id="run-code-btn" disabled><i data-lucide="play"></i> Run Tests</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- LEADERBOARD MODAL -->
+<div class="modal-overlay" id="leaderboard-modal">
+  <div class="modal-content" style="max-width: 500px;">
+    <div class="modal-header">
+      <h2><i data-lucide="trophy"></i> Wall of Fame</h2>
+      <button class="close-btn" onclick="document.getElementById('leaderboard-modal').classList.remove('open')"><i data-lucide="x"></i></button>
+    </div>
+    <div class="modal-body" style="display:block; padding: 20px;">
+      <div id="leaderboard-list"></div>
+    </div>
+  </div>
+</div>
+
+<!-- HELP MODAL -->
+<div class="modal-overlay" id="help-modal">
+  <div class="modal-content" style="max-width: 440px;">
+    <div class="modal-header">
+      <h2><i data-lucide="keyboard"></i> Keyboard Control</h2>
+      <button class="close-btn" onclick="document.getElementById('help-modal').classList.remove('open')"><i data-lucide="x"></i></button>
+    </div>
+    <div class="modal-body" style="display:block; padding: 25px;">
+      <div style="display:grid; grid-template-columns: 1fr auto; gap: 15px; font-size: 0.95rem;">
+        <span>Run Tests</span> <kbd class="kbd">Ctrl + Enter</kbd>
+        <span>Close Modal</span> <kbd class="kbd">Esc</kbd>
+        <span>Toggle Music</span> <kbd class="kbd">M</kbd>
+        <span>Search Quests</span> <kbd class="kbd">/</kbd>
+        <span>Show Help</span> <kbd class="kbd">?</kbd>
+        <span>Prev / Next Tab</span> <kbd class="kbd">← →</kbd>
+        <span>Surprise Me</span> <kbd class="kbd">S</kbd>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ACHIEVEMENTS MODAL -->
+<div class="modal-overlay" id="ach-modal">
+  <div class="modal-content" style="max-width: 800px;">
+    <div class="modal-header">
+      <h2><i data-lucide="medal"></i> Achievement Board</h2>
+      <button class="close-btn" onclick="closeAchievements()"><i data-lucide="x"></i></button>
+    </div>
+    <div class="modal-body" style="display:block;">
+      <div class="ach-grid" id="ach-grid-container">
+        <!-- populated dynamically -->
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- THEME PICKER MODAL -->
+<div class="modal-overlay" id="theme-modal">
+  <div class="modal-content theme-modal-content">
+    <div class="theme-search-container">
+      <i data-lucide="search" class="theme-search-icon"></i>
+      <input type="text" id="theme-search-input" placeholder="Search themes (e.g. 'ayu', 'nord')..." oninput="window.searchThemes(this.value)" autofocus>
+    </div>
+    <div class="theme-list" id="theme-grid-container">
+      <!-- themes will be rendered as list items here -->
+    </div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div id="toast">
+  <div class="toast-icon" id="toast-icon"><i data-lucide="star"></i></div>
+  <div>
+    <div class="toast-title" id="toast-title">Quest Complete!</div>
+    <div class="toast-sub"   id="toast-sub">+XP earned</div>
+  </div>
+</div>
+
+</div>
+
+<!-- Hidden YT Player -->
+
+<!-- Hidden YT Player -->
+<div id="yt-player-container" style="position: fixed; top: -100px; left: -100px; width: 1px; height: 1px; opacity: 0.01; pointer-events: none;"></div>
+<script type="module" src="src/js/main.js"></script>
+
+</body>
+</html>

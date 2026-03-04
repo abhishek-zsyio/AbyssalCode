@@ -1,0 +1,16 @@
+{
+  "name": "Abyssal Code",
+  "short_name": "AbyssalCode",
+  "description": "Master Python & JavaScript Challenges",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#191724",
+  "theme_color": "#191724",
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml"
+    }
+  ]
+}

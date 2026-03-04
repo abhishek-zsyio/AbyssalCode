@@ -1,0 +1,309 @@
+/* ===================== EFFECTS ===================== */
+
+.reveal {
+  opacity: 1;
+  transform: none;
+  transition: none;
+}
+
+/* ===================== THEME TRANSITION OVERLAYS ===================== */
+.theme-aura {
+  position: fixed;
+  inset: -20%;
+  pointer-events: none;
+  z-index: 9998;
+  background:
+    radial-gradient(circle at 30% 40%, color-mix(in srgb, var(--rp-iris) 55%, transparent) 0%, transparent 60%),
+    radial-gradient(circle at 70% 60%, color-mix(in srgb, var(--rp-foam) 50%, transparent) 0%, transparent 55%),
+    radial-gradient(circle at 55% 25%, color-mix(in srgb, var(--rp-love) 35%, transparent) 0%, transparent 55%);
+  filter: blur(20px) saturate(1.3);
+  opacity: 0;
+  animation: aura-pop 1000ms ease-out forwards;
+}
+
+.theme-shake {
+  animation: theme-shake 420ms ease-in-out;
+}
+
+.theme-scanline {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 9998;
+  background: repeating-linear-gradient(to bottom,
+      rgba(255, 255, 255, 0.03) 0px,
+      rgba(255, 255, 255, 0.03) 1px,
+      rgba(0, 0, 0, 0) 3px,
+      rgba(0, 0, 0, 0) 6px);
+  mix-blend-mode: overlay;
+  opacity: 0;
+  animation: scanline-pop 900ms ease-out forwards;
+}
+
+.theme-slash {
+  position: fixed;
+  left: -30vw;
+  top: 40vh;
+  width: 160vw;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, var(--rp-rose), var(--rp-gold), transparent);
+  box-shadow: 0 0 24px color-mix(in srgb, var(--rp-rose) 45%, transparent);
+  transform: rotate(-14deg);
+  pointer-events: none;
+  z-index: 9999;
+  opacity: 0;
+  animation: slash 520ms ease-out forwards;
+}
+
+.float-emoji {
+  position: fixed;
+  pointer-events: none;
+  z-index: 9999;
+  font-size: 1.8rem;
+  will-change: transform, opacity;
+  transform: translateZ(0);
+  animation: float-up 1.2s ease forwards;
+}
+
+/* ===================== HERO PULSE ===================== */
+@keyframes pulse-ring {
+
+  0%,
+  100% {
+    box-shadow:
+      0 0 0 6px color-mix(in srgb, var(--rp-iris) 15%, transparent),
+      0 0 36px color-mix(in srgb, var(--rp-iris) 25%, transparent);
+  }
+
+  50% {
+    box-shadow:
+      0 0 0 10px color-mix(in srgb, var(--rp-iris) 8%, transparent),
+      0 0 52px color-mix(in srgb, var(--rp-iris) 35%, transparent);
+  }
+}
+
+/* ===================== KEYFRAMES ===================== */
+@keyframes float-up {
+  to {
+    transform: translateY(-150px) scale(0);
+    opacity: 0;
+  }
+}
+
+@keyframes fadein {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes aura-pop {
+  0% {
+    opacity: 0;
+    transform: scale(0.96);
+  }
+
+  20% {
+    opacity: 0.6;
+  }
+
+  100% {
+    opacity: 0;
+    transform: scale(1.05);
+  }
+}
+
+@keyframes scanline-pop {
+  0% {
+    opacity: 0;
+  }
+
+  15% {
+    opacity: 0.55;
+  }
+
+  100% {
+    opacity: 0;
+  }
+}
+
+@keyframes theme-shake {
+  0% {
+    transform: translate3d(0, 0, 0);
+  }
+
+  15% {
+    transform: translate3d(-2px, 1px, 0);
+  }
+
+  30% {
+    transform: translate3d(2px, -1px, 0);
+  }
+
+  45% {
+    transform: translate3d(-2px, -1px, 0);
+  }
+
+  60% {
+    transform: translate3d(2px, 1px, 0);
+  }
+
+  100% {
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+@keyframes slash {
+  0% {
+    opacity: 0;
+    transform: translateX(0) rotate(-14deg);
+  }
+
+  30% {
+    opacity: 1;
+  }
+
+  100% {
+    opacity: 0;
+    transform: translateX(45vw) rotate(-14deg);
+  }
+}
+
+/* ===================== REIATSU ===================== */
+.reiatsu {
+  position: absolute;
+  pointer-events: none;
+  background: radial-gradient(circle, var(--rp-love) 0%, transparent 70%);
+  border-radius: 50%;
+  opacity: 0;
+  will-change: transform, opacity;
+  transform: translateZ(0);
+  animation: reiatsu-pulse 2s ease-out forwards;
+  z-index: 9999;
+}
+
+@keyframes reiatsu-pulse {
+  0% {
+    transform: scale(0.1);
+    opacity: 0.8;
+  }
+
+  100% {
+    transform: scale(3);
+    opacity: 0;
+  }
+}
+
+/* ===================== SHIMMER ===================== */
+@keyframes shimmer {
+  0% {
+    background-position: -200% center;
+  }
+
+  100% {
+    background-position: 200% center;
+  }
+}
+
+.shimmer-text {
+  background: linear-gradient(90deg, var(--rp-fg3) 25%, var(--rp-iris) 50%, var(--rp-fg3) 75%);
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  animation: shimmer 2.5s linear infinite;
+}
+
+/* ===================== BOSS & LEVEL UP ===================== */
+.boss-mode .modal-content {
+  border-color: var(--rp-love);
+  box-shadow: 0 0 40px color-mix(in srgb, var(--rp-love) 30%, transparent), 0 24px 70px rgba(0, 0, 0, 0.8);
+  animation: boss-gate-open 0.6s cubic-bezier(0.23, 1, 0.32, 1) both;
+}
+
+@keyframes boss-gate-open {
+  0% {
+    transform: scale(0.9) translateY(40px) rotateX(-15deg);
+    filter: blur(10px);
+    opacity: 0;
+  }
+
+  100% {
+    transform: scale(1) translateY(0) rotateX(0);
+    filter: blur(0);
+    opacity: 1;
+  }
+}
+
+.level-up-overlay {
+  background: rgba(0, 0, 0, 0.85);
+  backdrop-filter: blur(20px);
+}
+
+.level-up-content {
+  text-align: center;
+  padding: 40px;
+  max-width: 450px !important;
+  background: linear-gradient(180deg, var(--rp-bg1), var(--rp-bg));
+  border: 2px solid var(--rp-iris);
+  animation: level-up-pop 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.level-up-banner {
+  font-size: 3rem;
+  font-weight: 900;
+  color: var(--rp-gold);
+  text-shadow: 0 0 20px rgba(246, 193, 119, 0.4);
+  margin-bottom: 20px;
+}
+
+.level-up-emoji {
+  font-size: 5rem;
+  margin-bottom: 10px;
+}
+
+.level-up-rank {
+  color: var(--rp-iris);
+  font-weight: 800;
+  font-size: 1.2rem;
+}
+
+.level-up-name {
+  font-size: 2rem;
+  font-weight: 900;
+  color: var(--rp-fg);
+  margin-bottom: 20px;
+}
+
+@keyframes level-up-pop {
+  0% {
+    transform: scale(0.5);
+    opacity: 0;
+  }
+
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+/* Obsolete .music-picker section removed, replaced by custom dropdown in layout.css */
+
+/* ===================== REDUCED MOTION ===================== */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+
+  .hero::before,
+  .hero-mascot,
+  .hero-title {
+    animation: none !important;
+  }
+}

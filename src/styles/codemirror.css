@@ -1,0 +1,139 @@
+/* ===================== CODEMIRROR THEME ===================== */
+
+.cm-s-codequest.CodeMirror {
+    background: var(--rp-bg);
+    color: var(--rp-fg);
+}
+
+.cm-s-codequest .CodeMirror-gutters {
+    background: var(--rp-bg1);
+    border-right: 1px solid var(--rp-bg3);
+}
+
+.cm-s-codequest .CodeMirror-linenumber {
+    color: var(--rp-fg3);
+}
+
+.cm-s-codequest .CodeMirror-cursor {
+    border-left: 2px solid var(--rp-fg);
+}
+
+.cm-s-codequest div.CodeMirror-selected {
+    background: var(--rp-bg2);
+}
+
+.cm-s-codequest .CodeMirror-activeline-background {
+    background: var(--rp-bg1);
+}
+
+.cm-s-codequest .CodeMirror-matchingbracket {
+    color: var(--rp-gold) !important;
+    text-decoration: underline;
+}
+
+.cm-s-codequest .cm-keyword {
+    color: var(--rp-love);
+}
+
+.cm-s-codequest .cm-atom {
+    color: var(--rp-iris);
+}
+
+.cm-s-codequest .cm-number {
+    color: var(--rp-gold);
+}
+
+.cm-s-codequest .cm-def,
+.cm-s-codequest .cm-variable-2 {
+    color: var(--rp-foam);
+}
+
+.cm-s-codequest .cm-variable {
+    color: var(--rp-fg);
+}
+
+.cm-s-codequest .cm-variable-3,
+.cm-s-codequest .cm-type {
+    color: var(--rp-iris);
+}
+
+.cm-s-codequest .cm-property {
+    color: var(--rp-foam);
+}
+
+.cm-s-codequest .cm-operator {
+    color: var(--rp-rose);
+}
+
+.cm-s-codequest .cm-comment {
+    color: var(--rp-fg3);
+    font-style: italic;
+}
+
+.cm-s-codequest .cm-string,
+.cm-s-codequest .cm-string-2 {
+    color: var(--rp-gold);
+}
+
+.cm-s-codequest .cm-meta {
+    color: var(--rp-iris);
+}
+
+.cm-s-codequest .cm-qualifier {
+    color: var(--rp-foam);
+}
+
+.cm-s-codequest .cm-builtin {
+    color: var(--rp-iris);
+}
+
+.cm-s-codequest .cm-bracket {
+    color: var(--rp-fg2);
+}
+
+.cm-s-codequest .cm-tag {
+    color: var(--rp-love);
+}
+
+.cm-s-codequest .cm-attribute {
+    color: var(--rp-foam);
+}
+
+.cm-s-codequest .cm-error {
+    color: var(--rp-love);
+}
+
+/* ===================== CODEMIRROR HINTS ===================== */
+.CodeMirror-hints {
+    position: absolute;
+    z-index: 10001 !important;
+    overflow-y: auto !important;
+    max-height: 200px !important;
+    list-style: none;
+    margin: 0;
+    padding: 4px;
+    background: var(--rp-bg1) !important;
+    border: 1px solid var(--rp-bg3) !important;
+    border-radius: 12px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(255, 255, 255, 0.05);
+    font-family: inherit;
+    font-size: 13px;
+    min-width: 160px;
+    backdrop-filter: blur(12px);
+}
+
+.CodeMirror-hint {
+    margin: 2px 0;
+    padding: 6px 12px;
+    border-radius: 8px;
+    color: var(--rp-fg3);
+    white-space: pre;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+li.CodeMirror-hint-active {
+    background: var(--rp-bg2);
+    color: var(--rp-foam);
+    transform: translateX(2px);
+}

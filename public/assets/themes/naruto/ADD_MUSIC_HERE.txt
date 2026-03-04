@@ -1,0 +1,2 @@
+Optional: add a theme track here as music.mp3 (or music.ogg).
+The app will try to load: assets/themes/naruto/music.mp3
