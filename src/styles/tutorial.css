@@ -1,0 +1,184 @@
+/* ===================== TUTORIAL OVERLAY ===================== */
+#tutorial-root {
+    position: fixed;
+    inset: 0;
+    z-index: 99999;
+    pointer-events: none;
+}
+
+#tutorial-root.tut-hiding {
+    animation: tut-fade-out 0.4s ease forwards;
+}
+
+@keyframes tut-fade-out {
+    to {
+        opacity: 0;
+    }
+}
+
+#tut-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.65);
+    backdrop-filter: blur(4px);
+    pointer-events: all;
+    animation: tut-fade-in 0.3s ease;
+}
+
+@keyframes tut-fade-in {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+#tut-spotlight {
+    position: absolute;
+    border-radius: 14px;
+    box-shadow:
+        0 0 0 9999px rgba(0, 0, 0, 0.65),
+        0 0 0 3px var(--rp-iris),
+        0 0 24px color-mix(in srgb, var(--rp-iris) 50%, transparent);
+    transition: top 0.35s cubic-bezier(0.4, 0, 0.2, 1),
+        left 0.35s cubic-bezier(0.4, 0, 0.2, 1),
+        width 0.35s cubic-bezier(0.4, 0, 0.2, 1),
+        height 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+    pointer-events: none;
+}
+
+#tut-tooltip {
+    position: absolute;
+    width: 320px;
+    background: color-mix(in srgb, var(--rp-bg1) 92%, transparent);
+    border: 1px solid color-mix(in srgb, var(--rp-iris) 35%, transparent);
+    border-radius: 18px;
+    padding: 18px 20px 14px;
+    box-shadow:
+        0 24px 60px rgba(0, 0, 0, 0.8),
+        0 0 0 1px color-mix(in srgb, var(--rp-iris) 15%, transparent),
+        inset 0 0 30px rgba(255, 255, 255, 0.02);
+    backdrop-filter: blur(24px) saturate(180%);
+    pointer-events: all;
+    transition: top 0.35s cubic-bezier(0.4, 0, 0.2, 1),
+        left 0.35s cubic-bezier(0.4, 0, 0.2, 1),
+        opacity 0.2s ease;
+    animation: tut-pop 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+@keyframes tut-pop {
+    from {
+        transform: scale(0.88);
+        opacity: 0;
+    }
+
+    to {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+.tut-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 8px;
+    gap: 10px;
+}
+
+.tut-header strong {
+    font-family: 'Outfit', sans-serif;
+    font-size: 0.95rem;
+    font-weight: 800;
+    color: var(--rp-fg1);
+    flex: 1;
+}
+
+.tut-close {
+    background: color-mix(in srgb, var(--rp-bg3) 40%, transparent);
+    border: 1px solid color-mix(in srgb, var(--rp-bg3) 50%, transparent);
+    color: var(--rp-fg3);
+    cursor: pointer;
+    width: 26px;
+    height: 26px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.7rem;
+    font-weight: 800;
+    transition: all 0.2s;
+    flex-shrink: 0;
+    font-family: 'Outfit', sans-serif;
+}
+
+.tut-close:hover {
+    background: color-mix(in srgb, var(--rp-love) 20%, transparent);
+    border-color: var(--rp-love);
+    color: var(--rp-love);
+}
+
+.tut-text {
+    font-size: 0.84rem;
+    color: var(--rp-fg2);
+    line-height: 1.65;
+    margin: 0 0 14px;
+    font-family: 'Outfit', sans-serif;
+}
+
+.tut-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+}
+
+.tut-progress {
+    font-size: 0.7rem;
+    font-weight: 700;
+    color: var(--rp-fg3);
+    font-family: 'JetBrains Mono', monospace;
+}
+
+.tut-actions {
+    display: flex;
+    gap: 8px;
+}
+
+.tut-btn {
+    padding: 6px 14px;
+    border-radius: 99px;
+    font-family: 'Outfit', sans-serif;
+    font-size: 0.8rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s;
+    border: 1px solid transparent;
+}
+
+.tut-prev {
+    background: color-mix(in srgb, var(--rp-bg3) 30%, transparent);
+    border-color: color-mix(in srgb, var(--rp-bg3) 50%, transparent);
+    color: var(--rp-fg2);
+}
+
+.tut-prev:hover {
+    background: color-mix(in srgb, var(--rp-iris) 15%, transparent);
+    border-color: var(--rp-iris);
+    color: var(--rp-iris);
+}
+
+.tut-next {
+    background: var(--rp-iris);
+    color: var(--rp-bg);
+    border-color: var(--rp-iris);
+    box-shadow: 0 4px 12px color-mix(in srgb, var(--rp-iris) 35%, transparent);
+}
+
+.tut-next:hover {
+    filter: brightness(1.15);
+    transform: translateY(-1px);
+    box-shadow: 0 6px 18px color-mix(in srgb, var(--rp-iris) 45%, transparent);
+}

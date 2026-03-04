@@ -281,17 +281,17 @@ function renderThemeList() {
   const fragment = document.createDocumentFragment();
 
   let filtered;
-  if (activeFilter === 'recent') {
+  if (themeSearchQuery) {
+    // Global search across all categories
+    filtered = COLOR_SCHEMES.filter(s => {
+      return s.name.toLowerCase().includes(themeSearchQuery) ||
+        s.category.toLowerCase().includes(themeSearchQuery);
+    });
+  } else if (activeFilter === 'recent') {
     filtered = recentThemes.map(id => COLOR_SCHEMES.find(s => s.id === id)).filter(Boolean);
-    if (themeSearchQuery) {
-      filtered = filtered.filter(s => s.name.toLowerCase().includes(themeSearchQuery));
-    }
   } else {
     filtered = COLOR_SCHEMES.filter(s => {
-      const matchesCategory = activeFilter === 'all' || s.category === activeFilter;
-      const matchesSearch = s.name.toLowerCase().includes(themeSearchQuery) ||
-        s.category.toLowerCase().includes(themeSearchQuery);
-      return matchesCategory && matchesSearch;
+      return activeFilter === 'all' || s.category === activeFilter;
     });
   }
 

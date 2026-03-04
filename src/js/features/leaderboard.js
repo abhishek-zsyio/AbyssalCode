@@ -3,7 +3,7 @@
 import { appState } from '../core/state.js';
 import { totalXP, saveState, levelInfo } from '../core/state.js';
 import { TOPICS } from '../data/data.js';
-import { updateHUD, triggerReiatsu, spawnEmojis, openCodeModal, refreshIcons } from '../ui/ui.js';
+import { openCodeModal, refreshIcons } from '../ui/ui.js';
 
 export function initDailyQuest() {
   const today = new Date().toISOString().split('T')[0];
@@ -35,9 +35,9 @@ export function updateLeaderboard(questId, timeTaken) {
 export function openLeaderboard() {
   const modal = document.getElementById('leaderboard-modal');
   if (!modal) return;
-  
+
   document.querySelectorAll('.modal-overlay').forEach(m => m.classList.remove('open'));
-  
+
   const list = document.getElementById('leaderboard-list');
   if (!list) return;
 
@@ -54,11 +54,11 @@ export function openLeaderboard() {
       const records = appState.state._meta.leaderboard[id] || [];
       const prob = TOPICS.flatMap(t => t.problems).find(p => p.id === id);
       if (!prob) return;
-      
+
       const row = document.createElement('div');
       row.className = 'leaderboard-row';
       row.style.cssText = 'margin-bottom: 12px; background: var(--rp-bg1); padding: 10px; border-radius: 8px;';
-      
+
       let innerHTML = `<div style="font-weight:700; color:var(--rp-gold); font-size:0.9rem;">${prob.title}</div>`;
       records.forEach((r, idx) => {
         innerHTML += `<div style="display:flex; justify-content:space-between; font-size:0.8rem; margin-top:4px;">

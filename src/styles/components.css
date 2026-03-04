@@ -505,75 +505,103 @@
   background: color-mix(in srgb, var(--rp-bg1) 70%, transparent);
   border: 1px solid color-mix(in srgb, var(--rp-bg3) 40%, transparent);
   border-radius: var(--br-lg);
-  padding: 20px 24px;
-  margin-bottom: 28px;
+  margin-bottom: 20px;
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
+  overflow: hidden;
 }
 
 .heatmap-header {
   display: flex;
   align-items: center;
   gap: 8px;
+  padding: 12px 18px;
   font-weight: 800;
-  font-size: 0.95rem;
+  font-size: 0.88rem;
   color: var(--rp-fg);
-  margin-bottom: 14px;
+  cursor: pointer;
+  width: 100%;
+  background: transparent;
+  border: none;
+  font-family: 'Outfit', sans-serif;
+  transition: background 0.2s;
+}
+
+.heatmap-header:hover {
+  background: color-mix(in srgb, var(--rp-iris) 6%, transparent);
 }
 
 .heatmap-header svg {
+  width: 15px;
+  height: 15px;
+  color: var(--rp-iris);
+  flex-shrink: 0;
+}
+
+.heatmap-header .heatmap-chevron {
+  margin-left: auto;
+  color: var(--rp-fg3);
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   width: 16px;
   height: 16px;
-  color: var(--rp-iris);
+}
+
+.heatmap-section:not(.collapsed) .heatmap-chevron {
+  transform: rotate(180deg);
 }
 
 .heatmap-subtext {
-  font-size: 0.75rem;
+  font-size: 0.72rem;
   font-weight: 500;
   color: var(--rp-fg3);
-  margin-left: auto;
+}
+
+/* Accordion body */
+.heatmap-body {
+  max-height: 500px;
+  overflow: hidden;
+  transition: max-height 0.4s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.3s ease, padding 0.3s ease;
+  opacity: 1;
+  padding: 0 14px 14px;
+}
+
+.heatmap-section.collapsed .heatmap-body {
+  max-height: 0;
+  opacity: 0;
+  padding: 0 14px;
 }
 
 .heatmap-inner.month-wise {
   display: flex;
   flex-direction: row;
   flex-wrap: wrap;
-  gap: 16px;
+  gap: 10px;
   justify-content: flex-start;
 }
 
 .month-block {
   display: flex;
   flex-direction: column;
-  gap: 12px;
-  background: color-mix(in srgb, var(--rp-bg2) 30%, transparent);
-  border: 1px solid color-mix(in srgb, var(--rp-bg3) 20%, transparent);
-  border-radius: 16px;
-  padding: 16px;
+  gap: 6px;
   width: fit-content;
-  backdrop-filter: blur(8px);
-  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-
 .month-name {
-  font-size: 0.85rem;
+  font-size: 0.68rem;
   font-weight: 800;
   color: var(--rp-iris);
   text-transform: uppercase;
-  letter-spacing: 2px;
-  margin-bottom: 4px;
+  letter-spacing: 1.5px;
 }
 
 .heatmap-day-labels {
   display: grid;
-  grid-template-columns: repeat(7, 24px);
-  gap: 4px;
-  margin-bottom: 4px;
+  grid-template-columns: repeat(7, 16px);
+  gap: 3px;
 }
 
 .heatmap-day-labels span {
-  font-size: 0.6rem;
+  font-size: 0.52rem;
   color: var(--rp-fg3);
   text-align: center;
   font-weight: 800;
@@ -582,13 +610,13 @@
 
 .heatmap-grid {
   display: grid;
-  grid-template-columns: repeat(7, 24px);
-  gap: 4px;
+  grid-template-columns: repeat(7, 16px);
+  gap: 3px;
 }
 
 .heatmap-cell {
-  width: 16px;
-  height: 16px;
+  width: 12px;
+  height: 12px;
   border-radius: 3px;
   background: color-mix(in srgb, var(--rp-bg3) 50%, transparent);
   transition: transform 0.15s, box-shadow 0.15s;
@@ -602,7 +630,7 @@
 
 .heatmap-cell.active {
   background: color-mix(in srgb, var(--rp-iris) 80%, var(--rp-pine));
-  box-shadow: 0 0 6px color-mix(in srgb, var(--rp-iris) 45%, transparent);
+  box-shadow: 0 0 4px color-mix(in srgb, var(--rp-iris) 45%, transparent);
 }
 
 .heatmap-cell.today {
@@ -611,7 +639,7 @@
 }
 
 .heatmap-cell:not(.empty):hover {
-  transform: scale(1.45);
+  transform: scale(1.5);
   z-index: 2;
   position: relative;
 }
@@ -619,23 +647,23 @@
 .heatmap-legend {
   display: flex;
   align-items: center;
-  gap: 16px;
-  margin-top: 12px;
+  gap: 12px;
+  margin-top: 10px;
   flex-wrap: wrap;
 }
 
 .heatmap-legend>span {
   display: inline-flex;
   align-items: center;
-  gap: 5px;
-  font-size: 0.75rem;
+  gap: 4px;
+  font-size: 0.7rem;
   color: var(--rp-fg3);
   font-weight: 600;
 }
 
 .heatmap-legend>span svg {
-  width: 12px;
-  height: 12px;
+  width: 11px;
+  height: 11px;
   color: var(--rp-love);
 }
 
@@ -644,14 +672,15 @@
   align-items: center;
   gap: 3px;
   margin-left: auto;
-  font-size: 0.65rem;
+  font-size: 0.6rem;
   color: var(--rp-fg3);
 }
 
 .heatmap-scale .heatmap-cell {
-  width: 12px;
-  height: 12px;
+  width: 10px;
+  height: 10px;
 }
+
 
 /* ===================== UNIFIED DROPDOWNS ===================== */
 .dropdown-menu {

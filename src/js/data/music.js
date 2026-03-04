@@ -2,10 +2,10 @@ export const MUSIC_STATIONS = [
   { id: 'none', name: 'Theme Default', category: 'System', src: '' },
 
   // 🎧 Chill & Lo-Fi
-  { id: 'lofi', name: '☕ Lo-Fi Study', category: 'Chill & Lo-Fi', src: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3', },
-  { id: 'synth', name: '🌃 Synthwave', category: 'Chill & Lo-Fi', src: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3', },
-  { id: 'chill', name: '🍃 Chill Step', category: 'Chill & Lo-Fi', src: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3' },
-  { id: 'nature-rain', name: '🌧️ Spring Rain', category: 'Nature & Ambiance', src: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-8.mp3' },
+  { id: 'lofi', name: '☕ SoundHelix Song 1', category: 'Chill & Lo-Fi', src: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3', },
+  { id: 'synth', name: '🌃 SoundHelix Song 2', category: 'Chill & Lo-Fi', src: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3', },
+  { id: 'chill', name: '🍃 SoundHelix Song 3', category: 'Chill & Lo-Fi', src: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3' },
+  { id: 'nature-rain', name: '🌧️ SoundHelix Song 8', category: 'Nature & Ambiance', src: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-8.mp3' },
 
   // 🇮🇳 Bollywood Vibes (YouTube)
   { id: 'yjhd-kabira', name: '🏔️ Kabira - YJHD', category: 'Bollywood Vibes', ytId: 'jHNNMj5bNQw' },
@@ -16,8 +16,9 @@ export const MUSIC_STATIONS = [
   { id: 'znmd-der', name: '🚗 Der Lagi Lekin - ZNMD', category: 'Bollywood Vibes', ytId: 'Q-X8Y7q9J_M' },
 
   // 🌍 Global Cinematic (YouTube)
+  { id: 'interstellar-time', name: '🛰️ Cornfield Chase', category: 'Global Cinematic', ytId: '1Vko01Dldvg' },
   { id: 'lalaland-city', name: '🌃 City of Stars - La La Land', category: 'Global Cinematic', ytId: 'GTWqwSNQCcg' },
-  { id: 'bladerunner-2049', name: '🛸 2049 - Blade Runner', category: 'Global Cinematic', ytId: 'oas5n7vHpxM' },
+  { id: 'bladerunner-2049', name: '🛸 2049 - Blade Runner', category: 'Global Cinematic', ytId: '8V3D0H6mNFM' },
   { id: 'batman-theme', name: '🦇 The Batman - Theme', category: 'Global Cinematic', ytId: 'MvC9Y3Tq5xM' },
   { id: 'interstellar-time', name: '🛰️ Cornfield Chase', category: 'Global Cinematic', ytId: '1Vko01Dldvg' },
   { id: 'hollywood-matrix', name: '🕶️ The Matrix - Clubbed', category: 'Global Cinematic', ytId: 's_e_S6tC474' },
@@ -30,7 +31,7 @@ export const MUSIC_STATIONS = [
   { id: 'your-name-sparkle', name: '💫 Sparkle - Your Name', category: 'Anime & Ghibli', ytId: 'a2GujJZfXpg' },
   { id: 'naruto-blue-bird', name: '🍥 Blue Bird - Naruto', category: 'Anime & Ghibli', ytId: 'KPSlVfTidm8' },
   { id: 'op-binks', name: '🏴‍☠️ Binks Sake - One Piece', category: 'Anime & Ghibli', ytId: 'xy7KST_F9No' },
-  { id: 'anime-gurenge', name: '🔥 Gurenge - Demon Slayer', category: 'Anime & Ghibli', ytId: 'MpYy6Ybwf8w' },
+  { id: 'anime-gurenge', name: '🔥 Gurenge - Demon Slayer', category: 'Anime & Ghibli', ytId: 'aiQ_UadJ4kk' },
 
   // 🕹️ Gaming & Modern (YouTube)
   { id: 'elden-ring', name: '🗡️ Main Theme - Elden Ring', category: 'Gaming & Modern', ytId: 'S68Gv3_Y_yQ' },
@@ -49,9 +50,9 @@ export const MUSIC_STATIONS = [
   { id: 'monokai-focus', name: '🕹️ Retro Monokai 8-Bit', category: 'Editor Ambience', ytId: 'vcVDLvWvyEQ' },
 
   // 📝 Minimal & Ambiance
-  { id: 'paper-crumble', name: '📄 Paper Crumble', category: 'Minimal Ambiance', src: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-4.mp3' },
-  { id: 'graphite-scratch', name: '✏️ Pencil on Paper', category: 'Minimal Ambiance', src: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-5.mp3' },
-  { id: 'ghost-hum', name: '👻 Ghostly Hum', category: 'Minimal Ambiance', src: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-6.mp3' },
+  { id: 'paper-crumble', name: '📄 SoundHelix Song 4', category: 'Minimal Ambiance', src: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-4.mp3' },
+  { id: 'graphite-scratch', name: '✏️ SoundHelix Song 5', category: 'Minimal Ambiance', src: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-5.mp3' },
+  { id: 'ghost-hum', name: '👻 SoundHelix Song 6', category: 'Minimal Ambiance', src: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-6.mp3' },
   { id: 'minimal-sepia', name: '🎞️ Vintage Sepia Jazz', category: 'Minimal Ambiance', ytId: 'qF56601SXsc' }
 ];
 

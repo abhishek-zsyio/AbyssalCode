@@ -40,32 +40,52 @@ export async function runCode() {
   const runBtn = document.getElementById('run-code-btn');
 
   terminal.className = 'terminal running';
-  terminal.textContent = 'Running tests...';
+  terminal.textContent = 'Running tests...\n\n';
   runBtn.disabled = true;
   runBtn.textContent = 'Running...';
 
   try {
     if (lang === 'js') {
-      terminal.textContent = '';
+      terminal.textContent = ''; // Explicitly clear before JS execution logs
       const logs = [];
       const origLog = console.log;
-      console.log = (...args) => { logs.push(args.join(' ')); origLog(...args); };
+      console.log = (...args) => {
+        const formattedArgs = args.map(arg =>
+          typeof arg === 'object' ? JSON.stringify(arg) : String(arg)
+        ).join(' ');
+        logs.push(formattedArgs);
+        origLog(...args);
+      };
+
+      const origError = console.error;
+      console.error = (...args) => {
+        const formattedArgs = args.map(arg =>
+          typeof arg === 'object' ? JSON.stringify(arg) : String(arg)
+        ).join(' ');
+        logs.push('[Error] ' + formattedArgs);
+        origError(...args);
+      };
+
       try {
-        const AsyncFunction = Object.getPrototypeOf(async function () {}).constructor;
+        const AsyncFunction = Object.getPrototypeOf(async function () { }).constructor;
         const testCode = prob.testCodeJs || prob.testCode;
         const fullCode = userCode + '\n' + testCode;
         await new AsyncFunction(fullCode)();
-        if (logs.length) terminal.textContent += logs.join('\n') + '\n';
+        if (logs.length) {
+          // Join logs with double newlines for clear separation
+          terminal.textContent += logs.join('\n\n') + '\n\n';
+        }
       } finally {
         console.log = origLog;
+        console.error = origError;
       }
     } else if (lang === 'sql') {
       if (!appState.pyodideReady) return;
       terminal.textContent = '';
-      
+
       const setupSql = prob.setupSql || '';
       const validationPy = prob.validationPy || '';
-      
+
       // Hidden Python bridge to run the SQL and validate
       const sqlBridge = `
 import sqlite3
@@ -102,7 +122,7 @@ except Exception as e:
 # 3. Run Validation Logic
 ${validationPy}
 `;
-      
+
       appState.pyodide.setStdout({ batched: str => { terminal.textContent += str + '\n'; } });
       appState.pyodide.setStderr({ batched: str => { terminal.textContent += str + '\n'; } });
       await appState.pyodide.runPythonAsync(sqlBridge);
@@ -130,7 +150,7 @@ ${validationPy}
     if (currentMultiplier > 1.0) terminal.textContent += '\n🔥 Combo Multiplier: ' + currentMultiplier.toFixed(1) + 'x';
     terminal.className = 'terminal success';
 
-  const xpBefore = totalXP();
+    const xpBefore = totalXP();
     let isNewSolve = false;
 
     if (!(appState.state[appState.currentQuestId] && appState.state[appState.currentQuestId].done)) {
@@ -139,7 +159,7 @@ ${validationPy}
       appState.state[appState.currentQuestId].done = true;
       const xpToGain = Math.floor(prob.xp * currentMultiplier);
       appState.state[appState.currentQuestId].xp = xpToGain;
-      
+
       const key = lang === 'js' ? 'codeJs' : 'codePy';
       appState.state[appState.currentQuestId][key] = userCode;
       appState.state._meta.streak++;

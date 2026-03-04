@@ -22,6 +22,7 @@ import { playUI, setVibe } from './core/sound.js';
 import { openAchievements, closeAchievements } from './features/rewards.js';
 import { initDailyQuest, openDailyQuest, openLeaderboard } from './features/leaderboard.js';
 import './ui/themes.js';
+import { initTutorial } from './features/tutorial.js';
 
 // Expose handlers for HTML onclick (keeping some for backward compatibility if needed, but moving to event listeners where possible)
 window.runCode = runCode;
@@ -39,6 +40,16 @@ window.closeAchievements = closeAchievements;
 window.openDailyQuest = openDailyQuest;
 window.refreshIcons = refreshIcons;
 window.openSurpriseQuest = openSurpriseQuest;
+window.resetApp = () => {
+  if (confirm("Are you sure you want to reset all your progress, XP, and settings? This cannot be undone!")) {
+    const theme = localStorage.getItem('cq-theme');
+    localStorage.clear();
+    if (theme) {
+      localStorage.setItem('cq-theme', theme);
+    }
+    window.location.reload();
+  }
+};
 window.scrollTabs = (direction) => {
   const container = document.getElementById('tabs-container');
   if (!container) return;
@@ -86,26 +97,80 @@ function spawnSymbols() {
   refreshIcons(canvas);
 }
 
+let lastKey = '';
+
 document.addEventListener('keydown', (e) => {
-  if (e.key === 'm' || e.key === 'M') {
-    if (document.activeElement.tagName !== 'TEXTAREA' && document.activeElement.tagName !== 'INPUT') {
-      toggleSound();
+  const isInput = document.activeElement.tagName === 'TEXTAREA' || document.activeElement.tagName === 'INPUT';
+
+  // NvChad/Vim Style Shortcuts
+  if (!isInput) {
+    if (e.key === ' ') {
+      e.preventDefault(); // prevent default space scroll
+      lastKey = 'Space';
+      return;
+    }
+
+    // Space combinations
+    if (lastKey === 'Space') {
+      if (e.key === '/') {
+        e.preventDefault();
+        document.getElementById('quest-search').focus();
+        lastKey = '';
+        return;
+      }
+      if (e.key === 't') {
+        if (typeof window.openThemePicker === 'function') window.openThemePicker();
+        lastKey = '';
+        return;
+      }
+      if (e.key === 'l') {
+        if (typeof window.openLeaderboard === 'function') window.openLeaderboard();
+        lastKey = '';
+        return;
+      }
+    }
+
+    // Vim Scrolling 
+    if (e.key === 'j') {
+      window.scrollBy({ top: 120, behavior: 'smooth' });
+    } else if (e.key === 'k') {
+      window.scrollBy({ top: -120, behavior: 'smooth' });
+    } else if (e.key === 'G') {
+      window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
+    } else if (e.key === 'g') {
+      if (lastKey === 'g') {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+        lastKey = '';
+      } else {
+        lastKey = 'g';
+      }
+      return;
     }
   }
-  if (e.key === '?' || e.key === '¿') {
+
+  // Existing Shortcuts
+  if ((e.key === 'm' || e.key === 'M') && !isInput) {
+    toggleSound();
+  }
+  if ((e.key === '?' || e.key === '¿') && !isInput) {
     document.getElementById('help-modal').classList.add('open');
   }
-  if (e.key === '/') {
-    if (document.activeElement.tagName !== 'TEXTAREA' && document.activeElement.tagName !== 'INPUT') {
-      e.preventDefault();
-      document.getElementById('quest-search').focus();
-    }
+  // Optional: keep original '/' if user prefers it too, but we disabled it for Space+/ above.
+  // Actually, let's keep it if they just press '/'
+  if (e.key === '/' && !isInput && lastKey !== 'Space') {
+    e.preventDefault();
+    document.getElementById('quest-search').focus();
   }
   if (e.key === 'Escape') {
     document.querySelectorAll('.modal-overlay').forEach(m => m.classList.remove('open'));
   }
-  if ((e.key === 's' || e.key === 'S') && document.activeElement.tagName !== 'TEXTAREA' && document.activeElement.tagName !== 'INPUT') {
+  if ((e.key === 's' || e.key === 'S') && !isInput) {
     if (!document.querySelector('.modal-overlay.open')) openSurpriseQuest();
+  }
+
+  // Reset lastKey if it wasn't a prefix key
+  if (e.key !== ' ' && e.key !== 'g') {
+    lastKey = '';
   }
 });
 
@@ -153,6 +218,7 @@ window.addEventListener('DOMContentLoaded', async () => {
         setTimeout(() => {
           splash.classList.add('hidden');
           observeAll();
+          setTimeout(() => initTutorial(), 500); // Show tutorial after splash is gone
         }, 600);
       } else {
         bar.style.width = progress + '%';
@@ -224,6 +290,17 @@ window.addEventListener('DOMContentLoaded', async () => {
   attachListener('tabs-next', 'click', () => window.scrollTabs(1));
   attachListener('modal-hint-btn', 'click', () => toggleModalHint());
   attachListener('run-code-btn', 'click', () => runCode());
+
+  // Coding Activity accordion toggle
+  const heatmapToggle = document.getElementById('heatmap-toggle');
+  const heatmapSection = document.getElementById('heatmap-section');
+  if (heatmapToggle && heatmapSection) {
+    heatmapSection.classList.add('collapsed'); // start collapsed
+    heatmapToggle.addEventListener('click', () => {
+      const isCollapsed = heatmapSection.classList.toggle('collapsed');
+      heatmapToggle.setAttribute('aria-expanded', String(!isCollapsed));
+    });
+  }
 
   // Header Scroll Effect - Optimized with rAF
   const header = document.querySelector('.main-header');

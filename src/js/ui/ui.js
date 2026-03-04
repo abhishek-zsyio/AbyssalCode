@@ -26,6 +26,7 @@ import { MUSIC_STATIONS } from '../data/music.js';
 
 // CodeMirror
 import CodeMirror from 'codemirror';
+import { getHints } from './autocomplete.js';
 import 'codemirror/lib/codemirror.css';
 import 'codemirror/mode/python/python.js';
 import 'codemirror/mode/javascript/javascript.js';
@@ -406,6 +407,35 @@ export function openCodeModal(prob) {
   // Refresh icons in left panel
   refreshIcons(document.querySelector('.modal-left'));
 
+  // Staggered Entrance Animations
+  const leftPanel = document.querySelector('.modal-left');
+  const rightPanel = document.querySelector('.modal-right');
+
+  if (leftPanel && rightPanel) {
+    const animElements = [
+      ...leftPanel.children,
+      ...rightPanel.children
+    ];
+
+    // Reset opacity and transform before animating
+    animElements.forEach(el => {
+      el.style.opacity = '0';
+      el.style.transform = 'translateY(15px)';
+      el.style.transition = 'none';
+    });
+
+    // Trigger staggered animation on next frame
+    requestAnimationFrame(() => {
+      animElements.forEach((el, index) => {
+        setTimeout(() => {
+          el.style.transition = 'all 0.4s cubic-bezier(0.16, 1, 0.3, 1)';
+          el.style.opacity = '1';
+          el.style.transform = 'translateY(0)';
+        }, index * 40 + 100); // 100ms base delay + 40ms per element
+      });
+    });
+  }
+
   appState.questStartTime = performance.now();
   const topic = TOPICS.find(t => t.problems.some(p => p.id === prob.id));
   const availableLangs = prob.languages || (topic && topic.lang ? [topic.lang] : ['python']);
@@ -489,9 +519,11 @@ export function openCodeModal(prob) {
     extraKeys: {
       'Ctrl-Enter': () => window.runCode(),
       'Cmd-Enter': () => window.runCode(),
-      'Ctrl-Space': 'autocomplete'
+      'Ctrl-Space': (cm) => cm.showHint({ hint: getHints, refreshIcons: refreshIcons })
     },
     hintOptions: {
+      hint: getHints,
+      refreshIcons: refreshIcons,
       completeSingle: false,
       alignWithWord: true
     }
@@ -503,7 +535,7 @@ export function openCodeModal(prob) {
     if (change.origin !== '+input') return;
     const text = change.text[0];
     if (/[a-zA-Z0-9_.]/.test(text)) {
-      cm.showHint({ completeSingle: false });
+      cm.showHint({ hint: getHints, completeSingle: false, refreshIcons: refreshIcons });
     }
   });
 
@@ -555,6 +587,8 @@ export function showLevelUpModal(newLevel) {
   fireConfetti();
 }
 
+import { fetchYouTubeTitle } from '../core/sound.js';
+
 export function initMusicPicker() {
   const container = document.getElementById('music-player-info');
   if (!container) return;
@@ -571,6 +605,11 @@ export function initMusicPicker() {
 
   const currentTrack = MUSIC_STATIONS.find(s => s.id === appState.musicVibe) || MUSIC_STATIONS[0];
   wrapper.textContent = currentTrack.name;
+  if (currentTrack.ytId) {
+    fetchYouTubeTitle(currentTrack.ytId).then(title => {
+      if (title) wrapper.textContent = title;
+    });
+  }
 
   const menu = document.createElement('div');
   menu.className = 'music-menu dropdown-menu';
@@ -594,6 +633,13 @@ export function initMusicPicker() {
       item.className = 'music-menu-item dropdown-item';
       if (s.id === appState.musicVibe) item.classList.add('active');
       item.textContent = s.name;
+
+      if (s.ytId) {
+        fetchYouTubeTitle(s.ytId).then(title => {
+          if (title) item.textContent = title;
+        });
+      }
+
       item.onclick = (e) => {
         e.stopPropagation();
         setVibe(s.id);
@@ -834,7 +880,7 @@ export function renderHeatmap() {
   </div>`;
 
   container.innerHTML = html;
-  const subtextEl = document.querySelector('.heatmap-subtext');
+  const subtextEl = document.getElementById('heatmap-subtext');
   if (subtextEl) subtextEl.textContent = `Activity in ${currentYear}`;
   refreshIcons();
 }

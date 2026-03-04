@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="900" viewBox="0 0 1600 900">
+  <defs>
+    <linearGradient id="sea" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#003554"/>
+      <stop offset="0.7" stop-color="#051923"/>
+      <stop offset="1" stop-color="#00101a"/>
+    </linearGradient>
+    <linearGradient id="sun" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#ffd60a" stop-opacity="0.55"/>
+      <stop offset="1" stop-color="#ff9f1c" stop-opacity="0.05"/>
+    </linearGradient>
+  </defs>
+  <rect width="1600" height="900" fill="url(#sea)"/>
+  <circle cx="1280" cy="180" r="260" fill="url(#sun)"/>
+  <!-- compass-ish -->
+  <g transform="translate(320 520)" fill="none" stroke="#00a6fb" stroke-opacity="0.45" stroke-width="10">
+    <circle r="190"/>
+    <path d="M0,-210 L0,210"/>
+    <path d="M-210,0 L210,0"/>
+    <path d="M-150,-150 L150,150"/>
+    <path d="M150,-150 L-150,150"/>
+  </g>
+  <path d="M0 650 C240 610 420 760 680 720 C920 690 1120 820 1600 760 L1600 900 L0 900 Z" fill="#00a6fb" opacity="0.10"/>
+</svg>
