@@ -4,31 +4,31 @@ import { store } from './store.js';
 export const appState = {
   get state() { return store.state; },
   set state(v) { store.state = v; },
-  
+
   get currentTab() { return store.getSession('currentTab'); },
   set currentTab(v) { store.setSession('currentTab', v); },
-  
+
   get currentQuestId() { return store.getSession('currentQuestId'); },
   set currentQuestId(v) { store.setSession('currentQuestId', v); },
-  
+
   get currentLang() { return store.getSession('currentLang'); },
   set currentLang(v) { store.setSession('currentLang', v); },
-  
+
   get pyodideReady() { return store.getSession('pyodideReady'); },
   set pyodideReady(v) { store.setSession('pyodideReady', v); },
-  
+
   get pyodide() { return store.getSession('pyodide'); },
   set pyodide(v) { store.setSession('pyodide', v); },
-  
+
   get editor() { return store.getSession('editor'); },
   set editor(v) { store.setSession('editor', v); },
-  
+
   get questStartTime() { return store.getSession('questStartTime'); },
   set questStartTime(v) { store.setSession('questStartTime', v); },
-  
+
   get sessionErrorsCount() { return store.getSession('sessionErrorsCount'); },
   set sessionErrorsCount(v) { store.setSession('sessionErrorsCount', v); },
-  
+
   get onLevelUp() { return store.getSession('onLevelUp'); },
   set onLevelUp(v) { store.setSession('onLevelUp', v); },
 };
@@ -45,6 +45,10 @@ Object.defineProperty(appState, 'isMusicPaused', {
 Object.defineProperty(appState, 'musicVibe', {
   get: () => store.meta.musicVibe,
   set: (v) => { store.meta.musicVibe = v; store.save(); }
+});
+Object.defineProperty(appState, 'aiApiKey', {
+  get: () => store.meta.aiApiKey,
+  set: (v) => { store.meta.aiApiKey = v; store.save(); }
 });
 
 export const ACHIEVEMENTS = [
@@ -82,10 +86,10 @@ export function totalXP() {
 export function addXP(amount) {
   const oldXP = totalXP();
   const oldLevel = levelInfo(oldXP).level;
-  
+
   const newXP = oldXP + amount;
   const newLevel = levelInfo(newXP).level;
-  
+
   if (newLevel > oldLevel && appState.onLevelUp) {
     appState.onLevelUp(newLevel);
   }

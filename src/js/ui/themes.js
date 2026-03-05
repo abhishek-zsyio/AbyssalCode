@@ -47,7 +47,7 @@ let selectedIndex = 0;
 let lastFilteredThemes = [];
 let recentThemes = JSON.parse(localStorage.getItem('cq-recent-themes') || '[]');
 
-const TABS = ['all', 'recent', 'editor', 'minimal', 'anime', 'indie', 'regional', 'hollywood', 'modern'];
+const TABS = ['all', 'recent', 'aura', 'editor', 'minimal', 'anime', 'indie', 'regional', 'hollywood', 'modern'];
 
 function saveRecentTheme(id) {
   if (id === 'minimal-mist') return; // Don't track default?
@@ -128,11 +128,68 @@ function runThemeEasterEgg(id, scheme) {
   }
 }
 
-async function applyTheme(id) {
+export async function applyDynamicTheme(scheme) {
+  // Same logic as applyTheme but takes a raw scheme object
+  activeThemeId = scheme.id || 'ai-theme';
+  window.activeThemeId = activeThemeId;
+  localStorage.setItem('cq-theme', activeThemeId);
+  localStorage.setItem('cq-dynamic-theme', JSON.stringify(scheme));
+
+  const root = document.documentElement;
+  for (const [k, v] of Object.entries(scheme.vars)) root.style.setProperty(k, v);
+
+  if (scheme.isLight) {
+    document.body.classList.add('theme-light');
+  } else {
+    document.body.classList.remove('theme-light');
+  }
+
+  const bg = document.getElementById('theme-bg');
+  if (bg && scheme.bgImage) {
+    bg.style.backgroundImage = `url(${scheme.bgImage})`;
+    bg.classList.add('is-on');
+    setTimeout(() => bg.classList.remove('is-on'), 700);
+  } else if (bg) {
+    bg.style.backgroundImage = '';
+  }
+
+  if (scheme.musicStationId) {
+    setThemeMusic(scheme.musicStationId, activeThemeId);
+  }
+
+  if (scheme.mascotReaction) {
+    const heroMascot = document.querySelector('.hero-mascot img');
+    if (heroMascot) {
+      const url = await fetchOtakuGif(scheme.mascotReaction);
+      if (url) {
+        heroMascot.style.opacity = '0';
+        setTimeout(() => {
+          heroMascot.src = `${url}?t=${Date.now()}`;
+          heroMascot.style.opacity = '1';
+        }, 300);
+      }
+    }
+  }
+
+  if (appState.editor) appState.editor.setOption('theme', 'codequest');
+  saveRecentTheme(activeThemeId);
+  renderThemeList();
+  runThemeEasterEgg(activeThemeId, scheme);
+  refreshIcons();
+  playUI('click');
+}
+
+window.applyDynamicTheme = applyDynamicTheme;
+
+export async function applyTheme(id) {
   const modal = document.getElementById('theme-modal');
   if (modal) modal.classList.remove('open');
 
-  const scheme = COLOR_SCHEMES.find(s => s.id === id);
+  let scheme = COLOR_SCHEMES.find(s => s.id === id);
+  if (!scheme) {
+    // Try custom AI themes
+    scheme = (appState.state._meta.customThemes || []).find(s => s.id === id);
+  }
   if (!scheme) return;
   activeThemeId = id;
   window.activeThemeId = id;
@@ -269,9 +326,10 @@ function renderThemeList() {
   const categories = [
     { id: 'all', label: 'All', icon: 'layout-grid' },
     { id: 'recent', label: 'Recent', icon: 'clock' },
+    { id: 'aura', label: 'Aura', icon: 'sparkles' },
     { id: 'editor', label: 'Editors', icon: 'code' },
     { id: 'minimal', label: 'Minimal', icon: 'leaf' },
-    { id: 'anime', label: 'Anime', icon: 'sparkles' },
+    { id: 'anime', label: 'Anime', icon: 'smile' },
     { id: 'indie', label: 'Indie', icon: 'music' },
     { id: 'regional', label: 'Regional', icon: 'globe' },
     { id: 'hollywood', label: 'Hollywood', icon: 'clapperboard' },
@@ -290,16 +348,19 @@ function renderThemeList() {
   const fragment = document.createDocumentFragment();
 
   let filtered;
+  const aiThemes = (appState.state._meta.customThemes || []).map(t => ({ ...t, isAi: true }));
+  const combinedThemes = [...COLOR_SCHEMES, ...aiThemes];
+
   if (themeSearchQuery) {
-    // Global search across all categories
-    filtered = COLOR_SCHEMES.filter(s => {
-      return s.name.toLowerCase().includes(themeSearchQuery) ||
-        s.category.toLowerCase().includes(themeSearchQuery);
-    });
+    const q = themeSearchQuery.toLowerCase();
+    filtered = combinedThemes.filter(s =>
+      s.name.toLowerCase().includes(q) ||
+      s.category.toLowerCase().includes(q)
+    );
   } else if (activeFilter === 'recent') {
-    filtered = recentThemes.map(id => COLOR_SCHEMES.find(s => s.id === id)).filter(Boolean);
+    filtered = recentThemes.map(id => combinedThemes.find(s => s.id === id)).filter(Boolean);
   } else {
-    filtered = COLOR_SCHEMES.filter(s => {
+    filtered = combinedThemes.filter(s => {
       return activeFilter === 'all' || s.category === activeFilter;
     });
   }
@@ -313,10 +374,33 @@ function renderThemeList() {
       <i data-lucide="search-x" style="width:32px; height:32px; display:block; margin: 0 auto 12px; opacity:0.5;"></i> 
       ${activeFilter === 'recent' ? 'No recent themes yet.' : `No themes found matching "${themeSearchQuery}"`}
     `;
-    container.innerHTML = '';
-    container.appendChild(empty);
-    import('../ui/ui.js').then(m => m.refreshIcons(modalContent));
-    return;
+    fragment.appendChild(empty);
+  }
+
+  // Add Aura Weaver Entry at the top if in 'all' or 'aura' categories
+  if ((activeFilter === 'all' || activeFilter === 'aura') && (!themeSearchQuery || themeSearchQuery.length === 0)) {
+    const entry = document.createElement('div');
+    entry.className = 'aura-weaver-entry';
+    entry.onclick = () => {
+      document.getElementById('theme-modal').classList.remove('open');
+      document.getElementById('aura-weaver-modal').classList.add('open');
+      // Initialize usage info
+      if (document.getElementById('aura-session-tokens')) document.getElementById('aura-session-tokens').textContent = appState.state._meta.aiTokenUsage.session;
+      if (document.getElementById('aura-total-tokens')) document.getElementById('aura-total-tokens').textContent = appState.state._meta.aiTokenUsage.total;
+      const keyInput = document.getElementById('aura-api-key');
+      if (keyInput) keyInput.value = appState.aiApiKey || '';
+    };
+    entry.innerHTML = `
+      <div class="aura-weaver-entry-content">
+        <div class="aura-weaver-entry-icon"><i data-lucide="sparkles"></i></div>
+        <div class="aura-weaver-entry-text">
+          <h3>Aura Weaver <span class="ai-badge">AI</span></h3>
+          <p>Generate a theme from a YouTube link</p>
+        </div>
+      </div>
+      <div class="aura-weaver-entry-btn">Launch</div>
+    `;
+    fragment.appendChild(entry);
   }
 
   filtered.forEach((s, i) => {
@@ -340,7 +424,11 @@ function renderThemeList() {
     item.innerHTML = `
       <div class="theme-item-info">
         <span class="theme-item-number">#${themeIndex}</span>
-        <span class="theme-item-name"><i data-lucide="${s.icon || 'palette'}"></i> ${s.name}</span>
+        <span class="theme-item-name">
+          <i data-lucide="${s.icon || 'palette'}"></i> ${s.name}
+          ${s.isAi ? '<span class="ai-badge" style="font-size: 0.6rem; padding: 1px 4px; margin-left: 4px;">AI</span>' : ''}
+          ${(s.isAi || s.isNew) ? '<span class="new-tag" style="background: var(--rp-love); color: white; border-radius: 4px; font-size: 0.55rem; padding: 1px 6px; margin-left: 4px; font-weight: bold; box-shadow: 0 0 10px var(--rp-love);">NEW</span>' : ''}
+        </span>
         <span class="list-cat-badge">${catDisplayName}</span>
       </div>
       <div class="theme-item-colors">
@@ -387,5 +475,16 @@ window.scrollThemeTabs = scrollThemeTabs;
 window.openThemePicker = openThemePicker;
 window.activeThemeId = activeThemeId;
 window.COLOR_SCHEMES = COLOR_SCHEMES;
-if (activeThemeId !== 'minimal-mist') applyTheme(activeThemeId);
-else applyTheme('minimal-mist'); // Ensure initial theme variables are set
+const dynamicThemeStr = localStorage.getItem('cq-dynamic-theme');
+if (dynamicThemeStr && activeThemeId.startsWith('ai-')) {
+  try {
+    const theme = JSON.parse(dynamicThemeStr);
+    applyDynamicTheme(theme);
+  } catch (e) {
+    applyTheme('minimal-mist');
+  }
+} else if (activeThemeId !== 'minimal-mist') {
+  applyTheme(activeThemeId);
+} else {
+  applyTheme('minimal-mist');
+}

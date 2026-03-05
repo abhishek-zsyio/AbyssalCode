@@ -84,6 +84,33 @@ app.get('/download/:videoId', (req, res) => {
     });
 });
 
+app.get('/metadata/:videoId', (req, res) => {
+    const { videoId } = req.params;
+    if (!/^[a-zA-Z0-9_-]{11}$/.test(videoId)) {
+        return res.status(400).json({ success: false, error: 'Invalid Video ID format' });
+    }
+
+    const ytDlpPath = '/home/abhishek/.local/bin/yt-dlp';
+    const command = `${ytDlpPath} --dump-json "https://www.youtube.com/watch?v=${videoId}"`;
+
+    exec(command, { timeout: 15000 }, (error, stdout, stderr) => {
+        if (error) {
+            return res.status(500).json({ success: false, error: 'Metadata fetch failed' });
+        }
+        try {
+            const data = JSON.parse(stdout);
+            res.json({
+                success: true,
+                title: data.title,
+                description: data.description,
+                tags: data.tags || []
+            });
+        } catch (e) {
+            res.status(500).json({ success: false, error: 'Parsing failed' });
+        }
+    });
+});
+
 const server = app.listen(PORT, () => {
     console.log(`\n🎧 Abyssal Audio Server`);
     console.log(`🔗 URL: http://localhost:${PORT}`);
@@ -98,5 +125,3 @@ server.on('error', (err) => {
     }
     process.exit(1);
 });
-
-

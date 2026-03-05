@@ -113,6 +113,11 @@
   overflow-y: auto !important;
 }
 
+#aura-weaver-modal .modal-body::after,
+#theme-modal .modal-body::after {
+  display: none !important;
+}
+
 /* Add a subtle drag handle aesthetic between panels */
 .modal-body::after {
   content: '';
@@ -547,4 +552,324 @@
 .lang-pill.active {
   background: var(--rp-iris);
   color: var(--rp-bg1);
+}
+
+/* ===================== PREMIUM AURA WEAVER MODAL ===================== */
+.aura-modal-content {
+  max-width: 650px !important;
+  background: linear-gradient(165deg,
+      color-mix(in srgb, var(--rp-bg1) 95%, #fff) 0%,
+      var(--rp-bg1) 40%,
+      color-mix(in srgb, var(--rp-bg) 95%, #000) 100%) !important;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  box-shadow:
+    0 25px 50px -12px rgba(0, 0, 0, 0.5),
+    inset 0 1px 1px rgba(255, 255, 255, 0.05);
+  overflow: hidden;
+}
+
+.aura-modal-body {
+  padding: 32px !important;
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 28px;
+}
+
+.aura-modal-desc {
+  color: var(--rp-fg2);
+  font-size: 0.95rem;
+  font-weight: 500;
+  opacity: 0.7;
+  letter-spacing: -0.01em;
+  margin-bottom: -4px;
+}
+
+.aura-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 32px;
+}
+
+.aura-column {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+@media (max-width: 600px) {
+  .aura-grid {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+}
+
+.aura-input-section {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.aura-input-section label {
+  font-size: 0.72rem;
+  font-weight: 800;
+  color: var(--rp-fg3);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.aura-input-section label i {
+  width: 14px;
+  height: 14px;
+  color: var(--rp-iris);
+}
+
+.aura-input-section input,
+.aura-input-section textarea,
+.aura-select {
+  background: rgba(0, 0, 0, 0.25);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 12px;
+  padding: 14px 16px;
+  color: var(--rp-fg1);
+  font-family: inherit;
+  font-size: 0.92rem;
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.aura-input-section textarea {
+  min-height: 100px;
+  line-height: 1.5;
+}
+
+.aura-input-section input:focus,
+.aura-input-section textarea:focus,
+.aura-select:focus {
+  outline: none;
+  border-color: var(--rp-iris);
+  background: rgba(0, 0, 0, 0.35);
+  box-shadow:
+    0 0 0 4px color-mix(in srgb, var(--rp-iris) 15%, transparent),
+    inset 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.api-key-wrapper {
+  position: relative;
+  display: flex;
+}
+
+.api-key-wrapper input {
+  padding-right: 48px;
+  width: 100%;
+}
+
+.key-toggle-btn {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: var(--rp-fg3);
+  cursor: pointer;
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+}
+
+.key-toggle-btn:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: var(--rp-fg1);
+}
+
+.aura-stats-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  background: rgba(255, 255, 255, 0.02);
+  padding: 16px;
+  border-radius: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.aura-stat-box {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.stat-label {
+  font-size: 0.62rem;
+  font-weight: 800;
+  color: var(--rp-fg3);
+  letter-spacing: 0.05em;
+}
+
+.stat-val {
+  font-family: 'JetBrains Mono';
+  font-size: 1.1rem;
+  color: var(--rp-iris);
+  font-weight: 700;
+  text-shadow: 0 0 10px color-mix(in srgb, var(--rp-iris) 30%, transparent);
+}
+
+.aura-actions {
+  display: grid;
+  grid-template-columns: 160px 1fr;
+  gap: 16px;
+  margin-top: 8px;
+}
+
+.aura-secondary-btn {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 14px;
+  color: var(--rp-fg2);
+  font-weight: 700;
+  font-size: 0.85rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  transition: all 0.2s;
+}
+
+.aura-secondary-btn:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: var(--rp-fg1);
+}
+
+.aura-gen-btn {
+  background: linear-gradient(135deg, var(--rp-iris) 0%, var(--rp-rose) 100%);
+  border: none;
+  border-radius: 16px;
+  padding: 18px;
+  color: #fff;
+  font-weight: 900;
+  font-size: 0.95rem;
+  letter-spacing: 0.05em;
+  cursor: pointer;
+  position: relative;
+  transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  box-shadow: 0 10px 25px -5px color-mix(in srgb, var(--rp-iris) 40%, transparent);
+}
+
+.aura-gen-btn:hover {
+  transform: translateY(-3px);
+  filter: brightness(1.1);
+  box-shadow: 0 15px 30px -5px color-mix(in srgb, var(--rp-iris) 50%, transparent);
+}
+
+.aura-gen-btn:active {
+  transform: translateY(-1px);
+}
+
+.aura-gen-btn.loading .btn-text {
+  opacity: 0;
+}
+
+.btn-loader {
+  display: none;
+  width: 24px;
+  height: 24px;
+  border: 3px solid rgba(255, 255, 255, 0.2);
+  border-top-color: #fff;
+  border-radius: 50%;
+  position: absolute;
+  top: calc(50% - 12px);
+  left: calc(50% - 12px);
+  animation: aura-spin 0.8s linear infinite;
+}
+
+.aura-gen-btn.loading .btn-loader {
+  display: block;
+}
+
+@keyframes aura-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.aura-discovery-text {
+  font-size: 0.7rem;
+  color: var(--rp-fg3);
+  text-align: center;
+  font-family: 'JetBrains Mono';
+  margin-top: 0;
+  min-height: 1em;
+}
+
+/* ===================== AURA WEAVER ENTRANCE IN THEMES ===================== */
+.aura-weaver-entry {
+  grid-column: 1 / -1;
+  background: linear-gradient(135deg, rgba(198, 160, 246, 0.1), rgba(245, 189, 230, 0.1));
+  border: 2px dashed color-mix(in srgb, var(--rp-iris) 30%, transparent);
+  border-radius: 16px;
+  padding: 20px;
+  margin-bottom: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.aura-weaver-entry:hover {
+  background: linear-gradient(135deg, rgba(198, 160, 246, 0.15), rgba(245, 189, 230, 0.15));
+  border-color: var(--rp-iris);
+  transform: translateY(-2px);
+}
+
+.aura-weaver-entry-content {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.aura-weaver-entry-icon {
+  width: 44px;
+  height: 44px;
+  background: linear-gradient(135deg, var(--rp-iris), var(--rp-rose));
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  box-shadow: 0 4px 12px rgba(185, 28, 28, 0.2);
+}
+
+.aura-weaver-entry-text h3 {
+  margin: 0;
+  font-size: 1rem;
+  color: var(--rp-iris);
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.aura-weaver-entry-text p {
+  margin: 4px 0 0;
+  font-size: 0.82rem;
+  color: var(--rp-fg3);
+}
+
+.aura-weaver-entry-btn {
+  background: var(--rp-bg);
+  color: var(--rp-iris);
+  border: 1px solid var(--rp-iris);
+  padding: 6px 14px;
+  border-radius: 8px;
+  font-size: 0.75rem;
+  font-weight: 800;
+  text-transform: uppercase;
 }

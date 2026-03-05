@@ -331,6 +331,100 @@
     </div>
   </div>
 
+  <!-- AURA WEAVER (AI THEME) MODAL -->
+  <div class="modal-overlay" id="aura-weaver-modal">
+    <div class="modal-content aura-modal-content">
+      <div class="modal-header">
+        <h2><i data-lucide="sparkles"></i> Aura Weaver <span class="ai-badge">AI</span></h2>
+        <button class="close-btn" onclick="document.getElementById('aura-weaver-modal').classList.remove('open')">
+          <i data-lucide="x"></i>
+        </button>
+      </div>
+      <div class="modal-body aura-modal-body">
+        <p class="aura-modal-desc">Synthesize a custom aesthetic from any YouTube vibe.</p>
+
+        <div class="aura-grid">
+          <div class="aura-column">
+            <div class="aura-input-section">
+              <label><i data-lucide="link"></i> YouTube Source</label>
+              <input type="text" id="aura-yt-link" placeholder="Enter music link...">
+            </div>
+
+            <div class="aura-input-section">
+              <label><i data-lucide="message-square"></i> Creative Vibe</label>
+              <textarea id="aura-description" placeholder="Optional: rainy night, lo-fi, intense neon..."></textarea>
+            </div>
+          </div>
+
+          <div class="aura-column">
+            <div class="aura-input-section">
+              <label><i data-lucide="key"></i> API Access</label>
+              <div class="api-key-wrapper">
+                <input type="password" id="aura-api-key" placeholder="Gemini Key">
+                <button class="key-toggle-btn"
+                  onclick="const p = document.getElementById('aura-api-key'); p.type = p.type === 'password' ? 'text' : 'password';">
+                  <i data-lucide="eye"></i>
+                </button>
+              </div>
+            </div>
+
+            <div class="aura-input-section">
+              <label><i data-lucide="cpu"></i> AI Architecture</label>
+              <div class="aura-custom-select-wrapper" style="position: relative;">
+                <div id="aura-model-display" class="aura-select"
+                  style="display:flex; justify-content:space-between; align-items:center; cursor:pointer;"
+                  onclick="document.getElementById('aura-model-dropdown').style.display = document.getElementById('aura-model-dropdown').style.display === 'flex' ? 'none' : 'flex';">
+                  <span id="aura-model-selected-text">Gemini 3.1 Flash Lite</span>
+                  <i data-lucide="chevron-down" style="width: 16px; height: 16px; color: var(--rp-fg3);"></i>
+                </div>
+                <div id="aura-model-dropdown" class="dropdown-menu"
+                  style="position:absolute; top:calc(100% + 8px); left:0; right:0; display:none; flex-direction:column; gap:4px; max-height:200px; overflow-y:auto; z-index:100;">
+                  <div class="dropdown-item active" data-value="gemini-3.1-flash-lite-preview"
+                    onclick="window.selectAuraModel('gemini-3.1-flash-lite-preview', 'Gemini 3.1 Flash Lite', this)">
+                    Gemini 3.1 Flash Lite</div>
+                  <div class="dropdown-item" data-value="gemini-2.5-flash"
+                    onclick="window.selectAuraModel('gemini-2.5-flash', 'Gemini 2.5 Flash', this)">Gemini 2.5 Flash
+                  </div>
+                  <div class="dropdown-item" data-value="gemini-2.0-flash"
+                    onclick="window.selectAuraModel('gemini-2.0-flash', 'Gemini 2.0 Flash', this)">Gemini 2.0 Flash
+                  </div>
+                  <div class="dropdown-item" data-value="gemini-2.5-pro"
+                    onclick="window.selectAuraModel('gemini-2.5-pro', 'Gemini 2.5 Pro', this)">Gemini 2.5 Pro</div>
+                  <div class="dropdown-item" data-value="gemini-3-pro-preview"
+                    onclick="window.selectAuraModel('gemini-3-pro-preview', 'Gemini 3 Pro Preview', this)">Gemini 3 Pro
+                    Preview</div>
+                </div>
+                <input type="hidden" id="aura-model-select" value="gemini-3.1-flash-lite-preview">
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="aura-stats-grid">
+          <div class="aura-stat-box">
+            <span class="stat-label">SESSION</span>
+            <span class="stat-val" id="aura-session-tokens">0</span>
+          </div>
+          <div class="aura-stat-box">
+            <span class="stat-label">TOTAL ACCUMULATED</span>
+            <span class="stat-val" id="aura-total-tokens">0</span>
+          </div>
+        </div>
+
+        <div class="aura-actions">
+          <button id="aura-discover-models" class="aura-secondary-btn">
+            <i data-lucide="search"></i> Model Check
+          </button>
+          <button id="aura-weaver-generate-btn" class="aura-gen-btn">
+            <span class="btn-text">WEAVE THEME</span>
+            <span class="btn-loader" id="aura-loader"></span>
+          </button>
+        </div>
+        <div id="aura-supported-models" class="aura-discovery-text"></div>
+      </div>
+    </div>
+  </div>
+
   <!-- TOAST -->
   <div id="toast">
     <div class="toast-icon" id="toast-icon"><i data-lucide="star"></i></div>

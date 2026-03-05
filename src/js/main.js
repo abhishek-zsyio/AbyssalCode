@@ -40,6 +40,13 @@ window.closeAchievements = closeAchievements;
 window.openDailyQuest = openDailyQuest;
 window.refreshIcons = refreshIcons;
 window.openSurpriseQuest = openSurpriseQuest;
+window.selectAuraModel = (val, text, el) => {
+  document.getElementById('aura-model-select').value = val;
+  document.getElementById('aura-model-selected-text').textContent = text;
+  document.querySelectorAll('#aura-model-dropdown .dropdown-item').forEach(i => i.classList.remove('active'));
+  el.classList.add('active');
+  document.getElementById('aura-model-dropdown').style.display = 'none';
+};
 window.resetApp = () => {
   if (confirm("Are you sure you want to reset all your progress, XP, and settings? This cannot be undone!")) {
     const theme = localStorage.getItem('cq-theme');
@@ -237,10 +244,19 @@ window.addEventListener('DOMContentLoaded', async () => {
   initMusicPicker();
   refreshIcons();
 
-  // Global SFX for buttons
+  // Global SFX for buttons and dropdown closing
   document.addEventListener('click', (e) => {
     if (e.target.closest('button') || e.target.closest('.quest-card') || e.target.closest('.tab-btn')) {
       playUI('click');
+    }
+
+    // Auto-close AI model dropdown if clicking outside
+    const dropdown = document.getElementById('aura-model-dropdown');
+    const display = document.getElementById('aura-model-display');
+    if (dropdown && dropdown.style.display === 'flex') {
+      if (!dropdown.contains(e.target) && !display.contains(e.target)) {
+        dropdown.style.display = 'none';
+      }
     }
   });
 
@@ -327,6 +343,113 @@ window.addEventListener('DOMContentLoaded', async () => {
       const x = e.clientX - rect.left;
       const percent = (x / rect.width) * 100;
       seekTo(percent);
+    });
+  }
+
+  // Aura Weaver Logic
+  const auraGenBtn = document.getElementById('aura-weaver-generate-btn');
+  const auraLinkInput = document.getElementById('aura-yt-link');
+  const auraDescInput = document.getElementById('aura-description');
+  const auraKeyInput = document.getElementById('aura-api-key');
+  const auraModal = document.getElementById('aura-weaver-modal');
+
+  if (auraGenBtn) {
+    auraGenBtn.addEventListener('click', async () => {
+      const link = auraLinkInput?.value?.trim();
+      const desc = auraDescInput?.value?.trim();
+      const key = auraKeyInput?.value?.trim();
+
+      if (!link) return alert('Please enter a YouTube link.');
+      if (!key) return alert('Please enter your Gemini API key.');
+
+      // Save key to state (persistent via state.js setter)
+      appState.aiApiKey = key;
+
+      auraGenBtn.classList.add('loading');
+      auraGenBtn.disabled = true;
+
+      try {
+        const { generateThemeFromAi, extractYoutubeId } = await import('./core/ai.js');
+        const { applyDynamicTheme } = await import('./ui/themes.js');
+
+        const videoId = extractYoutubeId(link);
+        let enhancedDesc = desc;
+
+        // Try to fetch metadata for better vibe seeding
+        if (videoId) {
+          try {
+            const metaRes = await fetch(`http://localhost:3001/metadata/${videoId}`);
+            if (metaRes.ok) {
+              const metaData = await metaRes.json();
+              if (metaData.success) {
+                const vibeInfo = `Title: ${metaData.title}. Tags: ${metaData.tags.join(', ')}. Description: ${metaData.description.slice(0, 300)}...`;
+                enhancedDesc = desc ? `${desc} (Music Context: ${vibeInfo})` : vibeInfo;
+              }
+            }
+          } catch (e) {
+            console.warn('Metadata fetch failed, falling back to basic prompt.');
+          }
+        }
+
+        const modelSelect = document.getElementById('aura-model-select');
+        const selectedModel = modelSelect ? modelSelect.value : null;
+
+        const themeData = await generateThemeFromAi(link, enhancedDesc, selectedModel);
+        await applyDynamicTheme(themeData);
+
+        auraModal.classList.remove('open');
+        // Clear inputs
+        auraLinkInput.value = '';
+        auraDescInput.value = '';
+      } catch (err) {
+        alert(err.message || 'Failed to generate theme.');
+      } finally {
+        auraGenBtn.classList.remove('loading');
+        auraGenBtn.disabled = false;
+      }
+    });
+  }
+
+  if (auraKeyInput) {
+    auraKeyInput.addEventListener('change', () => {
+      appState.aiApiKey = auraKeyInput.value.trim();
+    });
+  }
+
+  const discoverBtn = document.getElementById('aura-discover-models');
+  if (discoverBtn) {
+    discoverBtn.addEventListener('click', async () => {
+      const { listAvailableModels } = await import('./core/ai.js');
+      const originalHtml = discoverBtn.innerHTML;
+      discoverBtn.innerHTML = '<i class="spin-icon"></i> Checking...';
+      const models = await listAvailableModels();
+      const dropdown = document.getElementById('aura-model-dropdown');
+
+      if (models.length > 0) {
+        if (dropdown) {
+          dropdown.innerHTML = models.map((m, i) => {
+            const displayName = m.split('/').pop().replace('models/', '');
+            return `<div class="dropdown-item ${i === 0 ? 'active' : ''}" data-value="${m}" onclick="window.selectAuraModel('${m}', '${displayName}', this)">${displayName}</div>`;
+          }).join('');
+
+          // Auto select first
+          const firstModel = models[0];
+          const firstDisplayName = firstModel.split('/').pop().replace('models/', '');
+          document.getElementById('aura-model-select').value = firstModel;
+          document.getElementById('aura-model-selected-text').textContent = firstDisplayName;
+        }
+
+        discoverBtn.innerHTML = '<i data-lucide="check"></i> Ready';
+        if (window.lucide) window.lucide.createIcons();
+      } else {
+        const supportedList = document.getElementById('aura-supported-models');
+        if (supportedList) {
+          supportedList.textContent = 'No models found. Check API key.';
+          supportedList.style.display = 'block';
+        }
+        discoverBtn.textContent = 'Retry discovery';
+      }
+      setTimeout(() => { if (discoverBtn.textContent === 'Ready' || discoverBtn.innerHTML.includes('Ready')) discoverBtn.innerHTML = originalHtml; }, 3000);
     });
   }
 });

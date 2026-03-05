@@ -26,7 +26,7 @@ class GameStore extends BaseStore {
     super();
     this.STORAGE_KEY = 'pythonQuest';
     this.state = this._loadInitialState();
-    
+
     // Session-only state (not persisted)
     this.session = {
       currentTab: 'ds',
@@ -55,7 +55,7 @@ class GameStore extends BaseStore {
     try {
       const saved = localStorage.getItem(this.STORAGE_KEY);
       const parsed = (saved && saved !== 'undefined') ? JSON.parse(saved) : {};
-      
+
       // Ensure basic structure exists
       if (!parsed._meta) {
         parsed._meta = this._getDefaultMeta();
@@ -63,7 +63,7 @@ class GameStore extends BaseStore {
         // Merge with defaults to ensure new fields are present
         parsed._meta = { ...this._getDefaultMeta(), ...parsed._meta };
       }
-      
+
       return parsed;
     } catch (e) {
       console.error('Failed to parse state:', e);
@@ -85,7 +85,10 @@ class GameStore extends BaseStore {
       activityLog: [],
       dailyStreak: 0,
       lastDailyCompleted: '',
-      comboKingCount: 0
+      comboKingCount: 0,
+      aiApiKey: '',
+      aiTokenUsage: { session: 0, total: 0 },
+      customThemes: [], // Stores AI generated themes
     };
   }
 
