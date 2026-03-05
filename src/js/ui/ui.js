@@ -615,6 +615,19 @@ export function initMusicPicker() {
   menu.className = 'music-menu dropdown-menu';
   menu.id = 'music-picker-menu';
 
+  const searchWrapper = document.createElement('div');
+  searchWrapper.className = 'music-search-wrapper';
+  searchWrapper.innerHTML = `
+    <i data-lucide="search" class="music-search-icon"></i>
+    <input type="text" id="music-search-input" placeholder="Search vibes..." autocomplete="off">
+  `;
+  menu.appendChild(searchWrapper);
+
+  menu.onclick = (e) => e.stopPropagation();
+  searchWrapper.onclick = (e) => e.stopPropagation();
+
+
+
   const categories = {};
   MUSIC_STATIONS.forEach(s => {
     const cat = s.category || 'Other';
@@ -633,10 +646,14 @@ export function initMusicPicker() {
       item.className = 'music-menu-item dropdown-item';
       if (s.id === appState.musicVibe) item.classList.add('active');
       item.textContent = s.name;
+      item.setAttribute('data-search', (s.name + ' ' + (s.category || '')).toLowerCase());
 
       if (s.ytId) {
         fetchYouTubeTitle(s.ytId).then(title => {
-          if (title) item.textContent = title;
+          if (title) {
+            item.textContent = title;
+            item.setAttribute('data-search', (title + ' ' + (s.category || '')).toLowerCase());
+          }
         });
       }
 
@@ -650,6 +667,31 @@ export function initMusicPicker() {
     });
   });
 
+  const searchInput = searchWrapper.querySelector('#music-search-input');
+  searchInput.addEventListener('input', (e) => {
+    const query = e.target.value.toLowerCase().trim();
+    const items = menu.querySelectorAll('.music-menu-item');
+    const groups = menu.querySelectorAll('.music-menu-group');
+
+    items.forEach(item => {
+      const searchStr = item.getAttribute('data-search') || '';
+      item.style.display = searchStr.includes(query) ? '' : 'none';
+    });
+
+    groups.forEach(group => {
+      let hasVisibleItem = false;
+      let next = group.nextElementSibling;
+      while (next && next.classList.contains('music-menu-item')) {
+        if (next.style.display !== 'none') {
+          hasVisibleItem = true;
+          break;
+        }
+        next = next.nextElementSibling;
+      }
+      group.style.display = hasVisibleItem ? '' : 'none';
+    });
+  });
+
   wrapper.onclick = (e) => {
     e.stopPropagation();
     import('../core/sound.js').then(m => m.recordInteraction());
@@ -658,11 +700,16 @@ export function initMusicPicker() {
     document.querySelectorAll('.music-menu.show').forEach(m => m.classList.remove('show'));
 
     if (!isShowing) {
+      // Clear search when opening
+      searchInput.value = '';
+      menu.querySelectorAll('.music-menu-item, .music-menu-group').forEach(el => el.style.display = '');
+
       const rect = wrapper.getBoundingClientRect();
       menu.style.top = (rect.bottom + 8) + 'px';
       menu.style.left = (rect.left + rect.width / 2) + 'px';
       menu.style.transform = 'translateX(-50%)';
       menu.classList.add('show');
+      setTimeout(() => { searchInput.focus(); }, 50);
     }
     playUI('pop');
   };
@@ -676,6 +723,7 @@ export function initMusicPicker() {
 
   container.appendChild(wrapper);
   document.body.appendChild(menu);
+  refreshIcons(menu);
 }
 
 function switchLanguage(prob, targetLang) {

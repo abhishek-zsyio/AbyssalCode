@@ -47,7 +47,7 @@ let selectedIndex = 0;
 let lastFilteredThemes = [];
 let recentThemes = JSON.parse(localStorage.getItem('cq-recent-themes') || '[]');
 
-const TABS = ['all', 'recent', 'editor', 'minimal', 'anime', 'bollywood', 'hollywood', 'modern'];
+const TABS = ['all', 'recent', 'editor', 'minimal', 'anime', 'indie', 'regional', 'hollywood', 'modern'];
 
 function saveRecentTheme(id) {
   if (id === 'minimal-mist') return; // Don't track default?
@@ -112,9 +112,17 @@ function runThemeEasterEgg(id, scheme) {
       if (!reduced) shakeBody();
       confettiBurst(['#d79921', '#cc241d', '#98971a', '#689d6a']);
       playThemeStinger('aot'); break;
-    case 'bolly-yjhd':
-      showMiniToast('🏔️', 'Manali Heights', 'Life is a trek.');
-      confettiBurst(['#38bdf8', '#ffffff', '#fb7185']);
+    case 'nature-alpine':
+      showMiniToast('🏔️', 'Alpine Mist', 'High altitude focus.');
+      confettiBurst(['#38bdf8', '#ffffff', '#f1f5f9']);
+      break;
+    case 'indie-tu-shanti':
+      showMiniToast('🎸', 'Tu Shanti', 'Mountains are calling.');
+      confettiBurst(['#aed581', '#558b2f', '#ffffff']);
+      break;
+    case 'regional-nila':
+      showMiniToast('🌙', 'Ilaya Nila', 'Moonlight classics.');
+      confettiBurst(['#003366', '#bcccdc', '#ffffff']);
       break;
     default: break;
   }
@@ -264,7 +272,8 @@ function renderThemeList() {
     { id: 'editor', label: 'Editors', icon: 'code' },
     { id: 'minimal', label: 'Minimal', icon: 'leaf' },
     { id: 'anime', label: 'Anime', icon: 'sparkles' },
-    { id: 'bollywood', label: 'Bollywood', icon: 'film' },
+    { id: 'indie', label: 'Indie', icon: 'music' },
+    { id: 'regional', label: 'Regional', icon: 'globe' },
     { id: 'hollywood', label: 'Hollywood', icon: 'clapperboard' },
     { id: 'modern', label: 'Modern', icon: 'zap' }
   ];

@@ -67,6 +67,38 @@ async function tryLocalServer(videoId) {
   return false;
 }
 
+/**
+ * backgroundCacheTrack(videoId)
+ * - Checks if already cached; if not, triggers the local server download in the background.
+ * - This ensures "played = downloaded" for next time.
+ */
+async function backgroundCacheTrack(videoId) {
+  if (!videoId) return;
+  try {
+    const cached = await getTrack(videoId);
+    if (cached) return; // Already in IndexedDB
+
+    console.log(`📡 [Background] Auto-downloading ${videoId} for future local playback…`);
+
+    // Silence toast for background auto-downloads unless it's a blocked recovery (handled in tryLocalServer)
+    const res = await fetch(`${LOCAL_SERVER_URL}/download/${videoId}`, {
+      signal: AbortSignal.timeout(60000)
+    }).catch(() => null);
+
+    if (res && res.ok) {
+      const data = await res.json();
+      if (data.success && data.url) {
+        const r = await fetch(data.url);
+        const blob = await r.blob();
+        await saveTrack(videoId, blob);
+        console.log(`💾 [Background] Cached ${videoId} in IndexedDB`);
+      }
+    }
+  } catch (e) {
+    console.warn(`⚠️ [BackgroundCache] failed for ${videoId}:`, e.message);
+  }
+}
+
 const AudioCtx = window.AudioContext || window.webkitAudioContext;
 let _actx = null;
 function getACtx() {
@@ -127,8 +159,8 @@ const setupYTPlayer = () => {
       'origin': window.location.origin,
       'widget_referrer': window.location.origin,
       'mute': 0,
-      'loop': 1,
-      'playlist': initialVideoId // Required for looping single video
+      'loop': 0, // Disable single-track looping for category loop
+      'playlist': initialVideoId
     }
   });
 
@@ -146,12 +178,16 @@ const setupYTPlayer = () => {
           const finalStation = { ...station, name: title || station.name };
           window.dispatchEvent(new CustomEvent('app:music:change', { detail: { station: finalStation } }));
         });
+        // Auto-download current station on load
+        backgroundCacheTrack(station.ytId);
       }
     } else {
       // if theme default
       fetchYouTubeTitle(initialVideoId).then(title => {
         window.dispatchEvent(new CustomEvent('app:music:change', { detail: { station: { name: title || 'Theme Default' } } }));
       });
+      // Auto-download initial video if not 'none'
+      if (initialVideoId) backgroundCacheTrack(initialVideoId);
     }
   });
 
@@ -162,9 +198,10 @@ const setupYTPlayer = () => {
 
     if (isRecovering) return;
 
-    // Manual loop fallback if playlist param fails
-    if (data === 0 && appState.isSoundEnabled && !appState.isMusicPaused) {
-      ytPlayer.playVideo();
+    // Category loop when track ends
+    if (data === 0 && !isTransitioning) {
+      console.log('🎵 YouTube track ended. Finding next in category…');
+      playNextInCategory();
     }
 
     if ((data === -1 || data === 5) && appState.isSoundEnabled && hasInteracted && appState.musicVibe !== 'none' && !appState.isMusicPaused) {
@@ -253,20 +290,33 @@ const initialStation = MUSIC_STATIONS.find(s => s.id === initialVibeId);
 const initialSrc = (initialStation && initialStation.src) ? initialStation.src : DEFAULT_BG_SRC;
 
 const bgMusic = new Audio(initialSrc);
-bgMusic.loop = true;
+bgMusic.loop = false; // Disable single-track looping
 bgMusic.volume = 0.25;
 
+bgMusic.addEventListener('ended', () => {
+  if (isTransitioning) return;
+  console.log('🎵 Local track ended. Finding next in category…');
+  playNextInCategory();
+});
+
+let isTransitioning = false;
+
 export function setVibe(vibeId, tid = null) {
-  const station = MUSIC_STATIONS.find(s => s.id === vibeId);
-  if (!station) return;
-  appState.musicVibe = vibeId; // This triggers persistence via getter/setter in state.js
+  const station = MUSIC_STATIONS.find(s => s.id.toLowerCase() === vibeId.toLowerCase());
+  if (!station) {
+    console.warn(`⚠️ [SetVibe] Station not found: ${vibeId}`);
+    return;
+  }
+
+  isTransitioning = true;
+  appState.musicVibe = station.id; // Use official ID casing
   currentThemeId = tid;
 
   // STOP ALL FIRST
   cleanupObjectURL();
   bgMusic.pause();
   if (ytReady && ytPlayer && ytPlayer.stopVideo) {
-    ytPlayer.stopVideo();
+    ytPlayer.stopVideo().catch(() => { });
     currentYtId = null;
   }
 
@@ -292,6 +342,7 @@ export function setVibe(vibeId, tid = null) {
         if (appState.isSoundEnabled && hasInteracted && !appState.isMusicPaused) {
           bgMusic.play().catch(() => { });
         }
+        isTransitioning = false; // End transition
         return; // skip YouTube player entirely
       }
 
@@ -307,6 +358,13 @@ export function setVibe(vibeId, tid = null) {
           ytPlayer.playVideo();
         }
       }
+      // Start background auto-download
+      backgroundCacheTrack(station.ytId);
+    }).catch(err => {
+      console.error('❌ [SetVibe] Error during cache check:', err);
+    }).finally(() => {
+      // Small delay to ensure engines are ready
+      setTimeout(() => { isTransitioning = false; }, 300);
     });
 
     fetchYouTubeTitle(station.ytId).then(title => {
@@ -314,16 +372,14 @@ export function setVibe(vibeId, tid = null) {
       window.dispatchEvent(new CustomEvent('app:music:change', { detail: { station: finalStation } }));
     });
   } else if (station.src) {
-    // Explicitly reset YouTube if moving to MP3
-    currentYtId = null;
+    // ...
     bgMusic.src = station.src;
     bgMusic.load();
     if (appState.isSoundEnabled && hasInteracted && !appState.isMusicPaused) {
-      bgMusic.play().catch(() => {
-        if (DEBUG_SOUND && tid) console.log(`🎵 Audio failure for theme: ${tid}`);
-      });
+      bgMusic.play().catch(() => { });
     }
     window.dispatchEvent(new CustomEvent('app:music:change', { detail: { station } }));
+    isTransitioning = false;
   }
 }
 
@@ -398,6 +454,8 @@ export function setThemeMusic(idOrSrc, tid = null) {
             ytPlayer.playVideo();
           }
         }
+        // Start background auto-download
+        backgroundCacheTrack(station.ytId);
       });
 
       fetchYouTubeTitle(station.ytId).then(title => {
@@ -535,10 +593,45 @@ export function toggleMusicPause() {
 }
 
 export function nextTrack() {
-  const currentIndex = MUSIC_STATIONS.findIndex(s => s.id === appState.musicVibe);
-  let nextIndex = (currentIndex + 1) % MUSIC_STATIONS.length;
-  if (MUSIC_STATIONS[nextIndex].id === 'none') nextIndex = (nextIndex + 1) % MUSIC_STATIONS.length;
-  setVibe(MUSIC_STATIONS[nextIndex].id);
+  playNextInCategory();
+}
+
+/**
+ * playNextInCategory()
+ * Logic to find the next track in the SAME category as the current vibe.
+ */
+function playNextInCategory() {
+  if (isTransitioning) return;
+
+  const currentVibe = appState.musicVibe;
+  const currentTrack = MUSIC_STATIONS.find(s => s.id.toLowerCase() === (currentVibe || '').toLowerCase());
+
+  if (!currentTrack || currentTrack.id === 'none') {
+    // Just play first non-none track if we can't determine category
+    console.warn('⚠️ [CategoryLoop] No current track or "none". Falling back.');
+    const fallback = MUSIC_STATIONS.find(s => s.id !== 'none');
+    if (fallback) setVibe(fallback.id);
+    return;
+  }
+
+  // Use case-insensitive and trimmed category matching
+  const targetCat = (currentTrack.category || '').trim().toLowerCase();
+  const categoryTracks = MUSIC_STATIONS.filter(s =>
+    (s.category || '').trim().toLowerCase() === targetCat && s.id !== 'none'
+  );
+
+  if (categoryTracks.length === 0) {
+    console.warn(`⚠️ [CategoryLoop] No tracks found for category: ${currentTrack.category}`);
+    return;
+  }
+
+  const currentIndex = categoryTracks.findIndex(s => s.id === currentVibe);
+  // If not found (e.g. current vibe is a raw YT ID), start from first in category
+  const nextIndex = (currentIndex === -1) ? 0 : (currentIndex + 1) % categoryTracks.length;
+  const nextTrack = categoryTracks[nextIndex];
+
+  console.log(`🔂 Loop: Next in [${currentTrack.category}] is "${nextTrack.name}"`);
+  setVibe(nextTrack.id);
 }
 
 export function prevTrack() {

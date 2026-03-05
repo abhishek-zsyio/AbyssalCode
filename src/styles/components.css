@@ -729,3 +729,39 @@
   color: var(--rp-fg3) !important;
   padding: 12px 14px 6px !important;
 }
+
+/* ===================== MUSIC PLAYER SEARCH ===================== */
+.music-search-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 14px;
+  border-bottom: 1px solid color-mix(in srgb, var(--rp-iris) 15%, transparent);
+  margin-bottom: 6px;
+  position: sticky;
+  top: 0;
+  background: inherit;
+  z-index: 10;
+}
+
+.music-search-icon {
+  width: 14px;
+  height: 14px;
+  color: var(--rp-iris);
+  opacity: 0.7;
+}
+
+#music-search-input {
+  background: transparent;
+  border: none;
+  color: var(--rp-fg);
+  font-family: 'Outfit', sans-serif;
+  font-size: 0.85rem;
+  width: 100%;
+  outline: none;
+}
+
+#music-search-input::placeholder {
+  color: var(--rp-fg3);
+  opacity: 0.6;
+}
